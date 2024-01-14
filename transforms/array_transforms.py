@@ -42,7 +42,8 @@ def remove_empty_slices(img_a, label_a):
     print(out_label_a.shape)
     
     return out_img_a, out_label_a
-#TODO function crop array to only non-zero lines cols (code in notebook)
+
+
 
 #remove all rows columns with just 0s 
 def crop_zero(img_a, label_a):
@@ -59,11 +60,11 @@ def crop_zero(img_a, label_a):
 
         #finding start and end of non-zero cols rows
         row_start = 0 #reset for each slice
-        row_end = 0
-        col_start = 0
-        col_end = 0
+        row_end = 0 #reset for each slice
+        col_start = 0 #reset for each slice
+        col_end = 0 #reset for each slice
         
-        #counting 0 lines, using this util for now but there is a chance it could find cols/rows of 0 within the region of interest
+        #counting 0 lines, using this util for now but there is a chance it could find and delete cols/rows of 0 within the region of interest
         
         for idx_row in range(label_a.shape[1]): #for rows
             if  np.any(label_a[idx, idx_row, :]):
@@ -90,4 +91,9 @@ def crop_zero(img_a, label_a):
     print("y max", y_max_nonzero)
 
     #TODO create the new arrays to return all the non_zero rows cols 
+    #TODO find the rows and cols where nonzeros start and end and from that index start adding to nonzero array 
+
+    out_img_a = np.empty(img_a.shape[0],x_max_nonzero, y_max_nonzero)
+    out_label_a = np.empty(label_a.shape[0], x_max_nonzero, y_max_nonzero)
+
     
