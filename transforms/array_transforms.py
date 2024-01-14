@@ -1,6 +1,5 @@
 import numpy as np
 
-#TODO function find max dims of area with masks (code in notebook)
 def remove_empty_slices(img_a, label_a):
     #creating new array instead of deleting from old one 
     slice_num = -1 #negative 1 because +1 brings us to [0] as first slice 
@@ -44,3 +43,49 @@ def remove_empty_slices(img_a, label_a):
     
     return out_img_a, out_label_a
 #TODO function crop array to only non-zero lines cols (code in notebook)
+
+
+def crop_zero(img_a, label_a):
+    row_max = 0
+    col_max = 0 #max of non empty rows and columns in the slices 
+
+    #max_list = [] #will hold [idx, count of rows, count of cols] 
+    x_max_list = []
+    y_max_list = []
+
+    for idx in range(label_a.shape[0]): #go through non empty slices
+        row_count = 0 #reset for each slice
+        col_count = 0 #reset for each slice 
+
+        #finding start and end of non-zero cols rows
+        row_start = 0 #reset for each slice
+        row_end = 0
+        col_start = 0
+        col_end = 0
+        
+        #counting 0 lines, using this util for now but there is a chance it could find cols/rows of 0 within the region of interest
+        
+        for idx_row in range(label_a.shape[1]): #for rows
+            if  np.any(label_a[idx, idx_row, :]):
+                row_count = row_count + 1
+
+        for idx_col in range(label_a.shape[2]): #for columns
+            if  np.any(label_a[idx, : ,idx_col]):
+                col_count = col_count +1
+
+        #max_list.append([idx, row_count, col_count]) #index of slice in mri, row count, col count  
+        x_max_list.append(row_count)
+        y_max_list.append(col_count)
+        #print("slice and non 0 lines cols",max_list[idx])   
+        
+    
+    print("original image res", label_a.shape) 
+
+    #max_list_arr = np.array(max_list)
+    #print(max_list_arr)
+
+    x_max_nonzero = max(x_max_list)
+    y_max_nonzero = max(y_max_list)
+    print("x max", x_max_nonzero)
+    print("y max", y_max_nonzero)
+    
