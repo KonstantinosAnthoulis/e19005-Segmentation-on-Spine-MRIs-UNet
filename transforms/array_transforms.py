@@ -17,7 +17,7 @@ def remove_empty_slices(img_a, label_a):
         #print(np.any(label.hu_a[idx]))
             slice_num = slice_num +1 
 
-    print(slice_num)
+    #print(slice_num)
     out_label_a = np.empty((slice_num+1, x, y))
     out_img_a = np.empty((slice_num+1, x, y))
 
