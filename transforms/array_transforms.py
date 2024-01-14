@@ -44,7 +44,7 @@ def remove_empty_slices(img_a, label_a):
     return out_img_a, out_label_a
 #TODO function crop array to only non-zero lines cols (code in notebook)
 
-
+#remove all rows columns with just 0s 
 def crop_zero(img_a, label_a):
     row_max = 0
     col_max = 0 #max of non empty rows and columns in the slices 
@@ -88,4 +88,6 @@ def crop_zero(img_a, label_a):
     y_max_nonzero = max(y_max_list)
     print("x max", x_max_nonzero)
     print("y max", y_max_nonzero)
+
+    #TODO create the new arrays to return all the non_zero rows cols 
     
