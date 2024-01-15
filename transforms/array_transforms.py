@@ -91,9 +91,15 @@ def crop_zero(img_a, label_a):
     print("y max", y_max_nonzero)
 
     #TODO create the new arrays to return all the non_zero rows cols 
-    #TODO find the rows and cols where nonzeros start and end and from that index start adding to nonzero array 
+     
 
-    out_img_a = np.empty(img_a.shape[0],x_max_nonzero, y_max_nonzero)
-    out_label_a = np.empty(label_a.shape[0], x_max_nonzero, y_max_nonzero)
+    out_img_a = np.empty([img_a.shape[0],x_max_nonzero, y_max_nonzero])
+    out_label_a = np.empty([label_a.shape[0], x_max_nonzero, y_max_nonzero])
+
+    return x_max_nonzero, y_max_nonzero #temporary just to get max dims
+
+    #TODO find the rows and cols where nonzeros start and end and from that index start adding to nonzero array
+
+
 
     
