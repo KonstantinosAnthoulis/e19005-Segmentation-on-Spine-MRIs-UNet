@@ -1,6 +1,7 @@
 import SimpleITK as sitk
 import numpy as np 
 
+#https://gist.github.com/mrajchl/ccbd5ed12eb68e0c1afc5da116af614a
 def resample_img(itk_image, out_spacing=[2.0, 0.6, 0.6], is_label=False):
 
     # Resample images to 2 0.6 0.6 spacing with SimpleITK
