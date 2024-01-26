@@ -39,8 +39,8 @@ def remove_empty_slices(img_a, label_a):
             new_index = new_index +1
 
 
-    print(np.any(out_label_a[0]))
-    print(out_label_a.shape)
+    #print(np.any(out_label_a[0]))
+    #print(out_label_a.shape)
     
     return out_img_a, out_label_a
 
@@ -89,15 +89,15 @@ def crop_zero(img_a, label_a):
         #print("slice and non 0 lines cols",max_list[idx])   
         
     
-    print("original image res", label_a.shape) 
+    #print("original image res", label_a.shape) 
 
     #max_list_arr = np.array(max_list)
     #print(max_list_arr)
 
     x_max_nonzero = max(x_max_list)
     y_max_nonzero = max(y_max_list)
-    print("x max", x_max_nonzero)
-    print("y max", y_max_nonzero)
+    #print("x max", x_max_nonzero)
+    #print("y max", y_max_nonzero)
 
     out_x = ((x_max_nonzero + 15) // 16) * 16
     out_y = ((y_max_nonzero + 15) // 16) * 16
@@ -109,23 +109,23 @@ def crop_zero(img_a, label_a):
     out_img_a = np.empty([img_a.shape[0], out_x, out_y])
     out_label_a = np.empty([label_a.shape[0],out_x, out_y]) #return arrays will have x y dims multiple of 16 for unet 
     
-    print("out shape", out_img_a.shape)
+    #print("out shape", out_img_a.shape)
 
     for idx in range(label_a.shape[0]): #go through non empty slices
         img_slice = img_a[idx]
         label_slice = label_a[idx]
-        print("slice from input array shape", img_slice.shape)
+        #print("slice from input array shape", img_slice.shape)
         
         #TODO find how to get center crop of 
         out_img_a[idx] = img_slice[center_col:center_col + out_x, center_row:center_row + out_y]
 
         out_label_a[idx] =label_slice[center_col:center_col + out_x, center_row:center_row + out_y]
     
-    print(out_label_a.shape)
+    #print(out_label_a.shape)
     
-    return out_img_a, out_label_a #temporary just to get max dims
+    return out_img_a, out_label_a 
 
-    #TODO find the rows and cols where nonzeros start and end and from that index start adding to nonzero array
+    
 
 
 
