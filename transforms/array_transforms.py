@@ -55,11 +55,7 @@ def crop_zero(img_a, label_a):
     x_max_list = []
     y_max_list = []
 
-     #finding start and end of non-zero cols rows
-    row_start_idx = 0 #reset for each mri
-    row_end_idx = 0 #reset for each mri
-    col_start_idx = 0 #reset for each mri
-    col_end_idx = 0 #reset for each mri
+    #TODO something goes wrong here in counting non zero rows cols, they end up higher than the image dimensions somehow 
 
     for idx in range(label_a.shape[0]): #go through non empty slices
         row_count = 0 #reset for each slice
@@ -96,9 +92,16 @@ def crop_zero(img_a, label_a):
     out_x = ((x_max_nonzero + 15) // 16) * 16
     out_y = ((y_max_nonzero + 15) // 16) * 16
 
+    print("x",out_x)
+    print("y", out_y)
+
     center_row = label_a.shape[2]//2 - out_y//2
     center_col = label_a.shape[1]//2 - out_x//2
+    
+    print()
 
+    print("col", center_col)
+    print("row", center_row)
 
     out_img_a = np.empty([img_a.shape[0], out_x, out_y])
     out_label_a = np.empty([label_a.shape[0],out_x, out_y]) #return arrays will have x y dims multiple of 16 for unet 
