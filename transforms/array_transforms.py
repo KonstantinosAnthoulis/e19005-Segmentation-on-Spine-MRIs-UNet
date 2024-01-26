@@ -69,18 +69,12 @@ def crop_zero(img_a, label_a):
         for idx_row in range(label_a.shape[1]): #for rows/y
             if  np.any(label_a[idx, idx_row, :]):
                 row_count = row_count + 1
-                if(row_start_idx == 0): #check if first non zero row 
-                    row_start_idx = idx_row
-                if np.any(label_a[idx, idx_row + 1, :]): #check if last non zero row
-                    row_end_idx = idx_row 
+             
 
         for idx_col in range(label_a.shape[2]): #for columns/x
             if  np.any(label_a[idx, : ,idx_col]):
                 col_count = col_count +1
-                if(col_start_idx == 0): #check if first non zero col 
-                    col_start_idx = idx_col
-                if np.any(label_a[idx, :, idx_col + 10]): #check if last non zero col
-                    col_end_idx = idx_col
+              
 
 
         #max_list.append([idx, row_count, col_count]) #index of slice in mri, row count, col count  
