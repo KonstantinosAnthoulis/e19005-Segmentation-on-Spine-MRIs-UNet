@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def remove_empty_slices(img_a, label_a):
     #creating new array instead of deleting from old one 
     slice_num = -1 #negative 1 because +1 brings us to [0] as first slice 
@@ -113,9 +114,14 @@ def crop_zero(img_a, label_a):
     print("/2 row", img_a.shape[1]/2)
     print("/2 col", img_a.shape[2]/2 )
 
-    out_img_a = img_a[ img_a.shape[1]//2 - x_max_nonzero//2:img_a.shape[1] + x_max_nonzero//2 , img_a.shape[2]//2 - y_max_nonzero//2:img_a.shape[2] + y_max_nonzero//2 , img_a.shape[0]]
+    row_center = label_a.shape[1]/2
+    col_center = label_a.shape[2]/2
 
-    print(out_img_a.shape)
+    out_img_a = np.empty([img_a.shape[0], ((x_max_nonzero + 15) // 16) * 16, ((y_max_nonzero + 15) // 16) * 16])
+    out_label_a = np.empty([label_a.shape[0],((x_max_nonzero + 15) // 16) * 16, ((y_max_nonzero + 15) // 16) * 16]) #return arrays will have x y dims multiple of 16 for unet 
+    
+    print("out shape", out_img_a.shape)
+
     return x_max_nonzero, y_max_nonzero #temporary just to get max dims
 
     #TODO find the rows and cols where nonzeros start and end and from that index start adding to nonzero array
