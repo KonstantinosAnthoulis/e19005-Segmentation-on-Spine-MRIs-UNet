@@ -70,6 +70,8 @@ def crop_zero(img_a, label_a):
         for idx_col in range(label_a.shape[2]): #for columns/x
             if  np.any(label_a[idx, : ,idx_col]):
                 col_count = col_count +1
+                
+
               
 
 
@@ -86,22 +88,24 @@ def crop_zero(img_a, label_a):
 
     x_max_nonzero = max(x_max_list)
     y_max_nonzero = max(y_max_list)
+    print("y max nonzero", y_max_nonzero)
     #print("x max", x_max_nonzero)
     #print("y max", y_max_nonzero)
 
-    out_x = ((x_max_nonzero + 15) // 16) * 16
-    out_y = ((y_max_nonzero + 15) // 16) * 16
+    if (x_max_nonzero % 16 != 0):
+        out_x = ((x_max_nonzero + 15) // 16) * 16
+    else:
+        out_x = x_max_nonzero
 
-    print("x",out_x)
-    print("y", out_y)
-
+    if(y_max_nonzero % 16 != 0): 
+        out_y = ((y_max_nonzero + 15) // 16) * 16
+        print("y max going in div", y_max_nonzero)
+        print("y div", y_max_nonzero % 16)
+    else:  
+        out_y = y_max_nonzero
+    
     center_row = label_a.shape[2]//2 - out_y//2
     center_col = label_a.shape[1]//2 - out_x//2
-    
-    print()
-
-    print("col", center_col)
-    print("row", center_row)
 
     out_img_a = np.empty([img_a.shape[0], out_x, out_y])
     out_label_a = np.empty([label_a.shape[0],out_x, out_y]) #return arrays will have x y dims multiple of 16 for unet 
