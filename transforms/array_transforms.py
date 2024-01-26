@@ -102,8 +102,8 @@ def crop_zero(img_a, label_a):
     out_x = ((x_max_nonzero + 15) // 16) * 16
     out_y = ((y_max_nonzero + 15) // 16) * 16
 
-    center_row = label_a.shape[1]//2 - out_y//2
-    center_col = label_a.shape[2]//2 - out_x//2
+    center_row = label_a.shape[2]//2 - out_y//2
+    center_col = label_a.shape[1]//2 - out_x//2
 
 
     out_img_a = np.empty([img_a.shape[0], out_x, out_y])
@@ -121,7 +121,7 @@ def crop_zero(img_a, label_a):
 
         out_label_a[idx] =label_slice[center_col:center_col + out_x, center_row:center_row + out_y]
     
-    print(out_label_a)
+    print(out_label_a.shape)
     
     return out_img_a, out_label_a #temporary just to get max dims
 
