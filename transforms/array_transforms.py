@@ -109,7 +109,7 @@ def crop_zero(img_a, label_a):
     out_img_a = np.empty([img_a.shape[0], out_row, out_col])
     out_label_a = np.empty([label_a.shape[0],out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
     
-    print("out shape", out_img_a.shape)
+    #print("out shape", out_img_a.shape)
 
     for idx in range(label_a.shape[0]): #go through non empty slices
         img_slice = img_a[idx]
