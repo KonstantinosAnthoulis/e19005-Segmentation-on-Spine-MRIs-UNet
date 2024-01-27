@@ -2,7 +2,7 @@ import numpy as np
 
 
 def remove_empty_slices(img_a, label_a):
-    #creating new array instead of deleting from old one 
+    
     slice_num = -1 #negative 1 because +1 brings us to [0] as first slice 
     x = label_a.shape[1]
     y = label_a.shape[2]
@@ -48,12 +48,12 @@ def remove_empty_slices(img_a, label_a):
 
 #remove all rows columns with just 0s 
 def crop_zero(img_a, label_a):
-    row_max = 0
-    col_max = 0 #max of non empty rows and columns in the slices 
-
-    #max_list = [] #will hold [idx, count of rows, count of cols] 
+ 
     x_max_list = []
     y_max_list = []
+
+    row_max_list = []
+    col_max_list = []
 
     #TODO something goes wrong here in counting non zero rows cols, they end up higher than the image dimensions somehow 
 
@@ -72,55 +72,55 @@ def crop_zero(img_a, label_a):
                 col_count = col_count +1
                 
 
-              
-
-
         #max_list.append([idx, row_count, col_count]) #index of slice in mri, row count, col count  
-        x_max_list.append(col_count)
-        y_max_list.append(row_count)
+        row_max_list.append(row_count)
+        col_max_list.append(col_count)
         #print("slice and non 0 lines cols",max_list[idx])   
         
-    
     #print("original image res", label_a.shape) 
 
     #max_list_arr = np.array(max_list)
     #print(max_list_arr)
 
-    x_max_nonzero = max(x_max_list)
-    y_max_nonzero = max(y_max_list)
-    print("y max nonzero", y_max_nonzero)
+    row_max_nonzero = max(row_max_list)
+    col_max_nonzero = max(col_max_list)
+    #print("y max nonzero", y_max_nonzero)
     #print("x max", x_max_nonzero)
     #print("y max", y_max_nonzero)
 
-    if (x_max_nonzero % 16 != 0):
-        out_x = ((x_max_nonzero + 15) // 16) * 16
+    if (row_max_nonzero % 16 != 0):
+        out_row = ((row_max_nonzero + 15) // 16) * 16
+        #print("row max going in div", row_max_nonzero)
+        #print("row div", row_max_nonzero % 16)
+        
     else:
-        out_x = x_max_nonzero
+        out_row = row_max_nonzero
 
-    if(y_max_nonzero % 16 != 0): 
-        out_y = ((y_max_nonzero + 15) // 16) * 16
-        print("y max going in div", y_max_nonzero)
-        print("y div", y_max_nonzero % 16)
+    if(col_max_nonzero % 16 != 0): 
+        out_col = ((col_max_nonzero + 15) // 16) * 16
+        #print("col max going in div", col_max_nonzero)
+        #print("col div", col_max_nonzero % 16)
     else:  
-        out_y = y_max_nonzero
+        out_col = col_max_nonzero
     
-    center_row = label_a.shape[2]//2 - out_y//2
-    center_col = label_a.shape[1]//2 - out_x//2
+    center_row = label_a.shape[1]//2 - out_row//2
+    center_col = label_a.shape[2]//2 - out_col//2
 
-    out_img_a = np.empty([img_a.shape[0], out_x, out_y])
-    out_label_a = np.empty([label_a.shape[0],out_x, out_y]) #return arrays will have x y dims multiple of 16 for unet 
+    out_img_a = np.empty([img_a.shape[0], out_row, out_col])
+    out_label_a = np.empty([label_a.shape[0],out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
     
-    #print("out shape", out_img_a.shape)
+    print("out shape", out_img_a.shape)
 
     for idx in range(label_a.shape[0]): #go through non empty slices
         img_slice = img_a[idx]
         label_slice = label_a[idx]
         #print("slice from input array shape", img_slice.shape)
         
+        #print("row dims to grab from", center_row, center_row + out_row)
         #TODO find how to get center crop of 
-        out_img_a[idx] = img_slice[center_col:center_col + out_x, center_row:center_row + out_y]
+        out_img_a[idx] = img_slice[center_row:center_row + out_row, center_col:center_col + out_col]
 
-        out_label_a[idx] =label_slice[center_col:center_col + out_x, center_row:center_row + out_y]
+        out_label_a[idx] =label_slice[center_row:center_row + out_row, center_col:center_col + out_col]
     
     #print(out_label_a.shape)
     
