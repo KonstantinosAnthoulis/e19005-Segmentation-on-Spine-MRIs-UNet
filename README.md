@@ -16,6 +16,6 @@ Latest stable iteration of data pipeline and model training <br>
 Clone από το συγκεκριμένο branch για πειραματισμό και υλοποίηση διαφόρων μεθόδων feature extraction/dimensionality reduction <br>
 Clone from branch for experimentation and implemenation of feature extraction/dimensionality reduction methods <br>
 ### Models Hyperparameters
-Clone από main για πειραματισμό με μοντέλα, υπερπαραμέτρους, διαχωρισμούς δεδομένων εκπαίδευσης/επαλήθευσης κα 
+Clone από main για πειραματισμό με μοντέλα, υπερπαραμέτρους, διαχωρισμούς δεδομένων εκπαίδευσης/επαλήθευσης κα <br>
 Clone from main for experimentation with models, hyperparameters, train/test splits etc 
 
