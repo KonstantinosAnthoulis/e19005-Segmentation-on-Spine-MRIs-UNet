@@ -4,9 +4,9 @@ Undergrad Thesis Konstantinos Anthoulis e19005 2023 2024 <br>
 Datatset & Challenge: https://spider.grand-challenge.org/
 
 ### Dependencies
-Anaconda 
-Pytorch 
-SimpleITK 
+Anaconda <br>
+Pytorch <br>
+SimpleITK <br>
 
 ## Branches 
 ### Main
