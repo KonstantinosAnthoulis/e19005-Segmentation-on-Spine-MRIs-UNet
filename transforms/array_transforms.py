@@ -1,5 +1,6 @@
 import numpy as np
-
+import SimpleITK as sitk
+import pathlib
 
 def remove_empty_slices(img_a, label_a):
     
@@ -127,6 +128,21 @@ def crop_zero(img_a, label_a):
     return out_img_a, out_label_a 
 
     
+
+def extract_slices(arr, input_mri_path, target_slice_dir):
+
+    for idx in range(arr.shape[0]):
+        idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+
+        input_path_split = input_mri_path.split(".")
+        pre = input_path_split[0] #1_t1
+        post = "_" + str(idx) + "." + input_path_split[1] #_0.mha for 1st slice of image 1_t1
+
+        slice_path = pre + post
+        target_dir = target_slice_dir.joinpath(slice_path)
+
+        sitk.WriteImage(idx_slice, target_dir)
+
 
 
 
