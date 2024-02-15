@@ -2,7 +2,7 @@ import SimpleITK as sitk
 import numpy as np 
 
 #https://gist.github.com/mrajchl/ccbd5ed12eb68e0c1afc5da116af614a
-def resample_img(itk_image, out_spacing=[2.0, 0.6, 0.6], is_label=False):
+def resample_img(itk_image, out_spacing, is_label=False):
 
     # Resample images to 2 0.6 0.6 spacing with SimpleITK
     original_spacing = itk_image.GetSpacing()
@@ -24,6 +24,6 @@ def resample_img(itk_image, out_spacing=[2.0, 0.6, 0.6], is_label=False):
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:
-        resample.SetInterpolator(sitk.sitkLinear)
+        resample.SetInterpolator(sitk.sitkBSpline)
 
     return resample.Execute(itk_image)
