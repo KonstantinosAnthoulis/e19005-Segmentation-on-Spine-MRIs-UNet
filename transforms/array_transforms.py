@@ -50,8 +50,6 @@ def remove_empty_slices(img_a, label_a):
 #remove all rows columns with just 0s 
 def crop_zero(img_a, label_a):
  
-    x_max_list = []
-    y_max_list = []
 
     row_max_list = []
     col_max_list = []
@@ -133,6 +131,8 @@ def extract_slices(arr, input_mri_path, target_slice_dir):
 
     for idx in range(arr.shape[0]):
         idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+
+        print(idx_slice.GetSize())
 
         input_path_split = input_mri_path.split(".")
         pre = input_path_split[0] #1_t1
