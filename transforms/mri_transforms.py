@@ -24,6 +24,6 @@ def resample_img(itk_image, out_spacing, is_label):
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:
-        resample.SetInterpolator(sitk.sitkLinear) #IMAGE INTERP 
+        resample.SetInterpolator(sitk.sitkBSpline) #IMAGE INTERP 
 
     return resample.Execute(itk_image)
