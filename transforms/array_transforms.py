@@ -2,6 +2,7 @@ import numpy as np
 import SimpleITK as sitk
 import pathlib
 
+#--------------------3D ARRAYS-------------------------------------------------------------------
 def remove_empty_slices(img_a, label_a):
     
     slice_num = -1 #negative 1 because +1 brings us to [0] as first slice 
@@ -46,93 +47,12 @@ def remove_empty_slices(img_a, label_a):
     return out_img_a, out_label_a
 
 
-
-#remove all rows columns with just 0s 
-def crop_zero(img_a, label_a):
- 
-    x_max_list = []
-    y_max_list = []
-
-    row_max_list = []
-    col_max_list = []
-
-    #TODO something goes wrong here in counting non zero rows cols, they end up higher than the image dimensions somehow 
-
-    for idx in range(label_a.shape[0]): #go through non empty slices
-        row_count = 0 #reset for each slice
-        col_count = 0 #reset for each slice 
-
-        #counting 0 rows, using this util for now but there is a chance it could find and delete cols/rows of 0 within the region of interest
-        for idx_row in range(label_a.shape[1]): #for rows/y
-            if  np.any(label_a[idx, idx_row, :]):
-                row_count = row_count + 1
-             
-
-        for idx_col in range(label_a.shape[2]): #for columns/x
-            if  np.any(label_a[idx, : ,idx_col]):
-                col_count = col_count +1
-                
-
-        #max_list.append([idx, row_count, col_count]) #index of slice in mri, row count, col count  
-        row_max_list.append(row_count)
-        col_max_list.append(col_count)
-        #print("slice and non 0 lines cols",max_list[idx])   
-        
-    #print("original image res", label_a.shape) 
-
-    #max_list_arr = np.array(max_list)
-    #print(max_list_arr)
-
-    row_max_nonzero = max(row_max_list)
-    col_max_nonzero = max(col_max_list)
-    #print("y max nonzero", y_max_nonzero)
-    #print("x max", x_max_nonzero)
-    #print("y max", y_max_nonzero)
-
-    if (row_max_nonzero % 16 != 0):
-        out_row = ((row_max_nonzero + 15) // 16) * 16
-        #print("row max going in div", row_max_nonzero)
-        #print("row div", row_max_nonzero % 16)
-        
-    else:
-        out_row = row_max_nonzero
-
-    if(col_max_nonzero % 16 != 0): 
-        out_col = ((col_max_nonzero + 15) // 16) * 16
-        #print("col max going in div", col_max_nonzero)
-        #print("col div", col_max_nonzero % 16)
-    else:  
-        out_col = col_max_nonzero
-    
-    center_row = label_a.shape[1]//2 - out_row//2
-    center_col = label_a.shape[2]//2 - out_col//2
-
-    out_img_a = np.empty([img_a.shape[0], out_row, out_col])
-    out_label_a = np.empty([label_a.shape[0],out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
-    
-    #print("out shape", out_img_a.shape)
-
-    for idx in range(label_a.shape[0]): #go through non empty slices
-        img_slice = img_a[idx]
-        label_slice = label_a[idx]
-        #print("slice from input array shape", img_slice.shape)
-        
-        #print("row dims to grab from", center_row, center_row + out_row)
-        #TODO find how to get center crop of 
-        out_img_a[idx] = img_slice[center_row:center_row + out_row, center_col:center_col + out_col]
-
-        out_label_a[idx] =label_slice[center_row:center_row + out_row, center_col:center_col + out_col]
-    
-    #print(out_label_a.shape)
-    
-    return out_img_a, out_label_a 
-
-    
-
 def extract_slices(arr, input_mri_path, target_slice_dir):
 
     for idx in range(arr.shape[0]):
         idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+
+        print(idx_slice.GetSize())
 
         input_path_split = input_mri_path.split(".")
         pre = input_path_split[0] #1_t1
@@ -142,6 +62,64 @@ def extract_slices(arr, input_mri_path, target_slice_dir):
         target_dir = target_slice_dir.joinpath(slice_path)
 
         sitk.WriteImage(idx_slice, target_dir)
+
+#--------------------2D ARRAYS-------------------------------------------------------------------
+#remove all rows columns with just 0s 
+def crop_zero(img_a, label_a):
+ 
+    row_count = 0
+    col_count = 0
+
+    #counting 0 rows, using this util for now but there is a chance it could find and delete cols/rows of 0 within the region of interest
+    for idx_row in range(label_a.shape[0]): #for rows
+         if  np.any(label_a[idx_row, :]):
+            row_count = row_count + 1
+             
+
+    for idx_col in range(label_a.shape[1]): #for cos
+        if  np.any(label_a[: ,idx_col]):
+            col_count = col_count +1
+                
+
+
+    #print("y max nonzero", y_max_nonzero)
+    #print("x max", x_max_nonzero)
+    #print("y max", y_max_nonzero)
+
+    if (row_count % 16 != 0):
+        out_row = ((row_count+ 15) // 16) * 16
+        #print("row max going in div", row_max_nonzero)
+        #print("row div", row_max_nonzero % 16)
+        
+    else:
+        out_row = row_count
+
+    if(col_count % 16 != 0): 
+        out_col = ((col_count + 15) // 16) * 16
+        #print("col max going in div", col_max_nonzero)
+        #print("col div", col_max_nonzero % 16)
+    else:  
+        out_col = col_count
+    
+    center_row = label_a.shape[0]//2 - out_row//2
+    center_col = label_a.shape[1]//2 - out_col//2
+
+    out_img_a = np.empty([out_row, out_col])
+    out_label_a = np.empty([out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
+    
+    #print("out shape", out_img_a.shape)
+
+    out_img_a = img_a[center_row:center_row + out_row, center_col:center_col + out_col]
+
+    out_label_a = label_a[center_row:center_row + out_row, center_col:center_col + out_col]
+    
+    #print(out_label_a.shape)
+    
+    return out_img_a, out_label_a 
+
+    
+
+
 
 
 
