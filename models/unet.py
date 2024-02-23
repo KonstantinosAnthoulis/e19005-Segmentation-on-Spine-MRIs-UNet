@@ -1,189 +1,236 @@
-#https://github.com/labmlai/annotated_deep_learning_paper_implementations/blob/master/labml_nn/unet/__init__.py
-
-"""
----
-title: U-Net
-summary: >
-    PyTorch implementation and tutorial of U-Net model.
----
-
-# U-Net
-
-This is an implementation of the U-Net model from the paper,
-[U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597).
-
-U-Net consists of a contracting path and an expansive path.
-The contracting path is a series of convolutional layers and pooling layers,
-where the resolution of the feature map gets progressively reduced.
-Expansive path is a series of up-sampling layers and convolutional layers
-where the resolution of the feature map gets progressively increased.
-
-At every step in the expansive path the corresponding feature map from the contracting path
-concatenated with the current feature map.
-
-![U-Net diagram from paper](unet.png)
-
-Here is the [training code](experiment.html) for an experiment that trains a U-Net
-on [Carvana dataset](carvana.html).
-"""
 import torch
-import torchvision.transforms.functional
-from torch import nn
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.autograd import Variable
+from collections import OrderedDict
+from torch.nn import init
+import numpy as np
+
+def conv3x3(in_channels, out_channels, stride=1, 
+            padding=1, bias=True, groups=1):    
+    return nn.Conv2d(
+        in_channels,
+        out_channels,
+        kernel_size=3,
+        stride=stride,
+        padding=padding,
+        bias=bias,
+        groups=groups)
+
+def upconv2x2(in_channels, out_channels, mode='transpose'):
+    if mode == 'transpose':
+        return nn.ConvTranspose2d(
+            in_channels,
+            out_channels,
+            kernel_size=2,
+            stride=2)
+    else:
+        # out_channels is always going to be the same
+        # as in_channels
+        return nn.Sequential(
+            nn.Upsample(mode='bilinear', scale_factor=2),
+            conv1x1(in_channels, out_channels))
+
+def conv1x1(in_channels, out_channels, groups=1):
+    return nn.Conv2d(
+        in_channels,
+        out_channels,
+        kernel_size=1,
+        groups=groups,
+        stride=1)
 
 
-class DoubleConvolution(nn.Module):
+class DownConv(nn.Module):
     """
-    ### Two $3 \times 3$ Convolution Layers
-
-    Each step in the contraction path and expansive path have two $3 \times 3$
-    convolutional layers followed by ReLU activations.
-
-    In the U-Net paper they used $0$ padding,
-    but we use $1$ padding so that final feature map is not cropped.
+    A helper Module that performs 2 convolutions and 1 MaxPool.
+    A ReLU activation follows each convolution.
     """
+    def __init__(self, in_channels, out_channels, pooling=True):
+        super(DownConv, self).__init__()
 
-    def __init__(self, in_channels: int, out_channels: int):
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.pooling = pooling
+
+        self.conv1 = conv3x3(self.in_channels, self.out_channels)
+        self.conv2 = conv3x3(self.out_channels, self.out_channels)
+
+        if self.pooling:
+            self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        before_pool = x
+        if self.pooling:
+            x = self.pool(x)
+        return x, before_pool
+
+
+class UpConv(nn.Module):
+    """
+    A helper Module that performs 2 convolutions and 1 UpConvolution.
+    A ReLU activation follows each convolution.
+    """
+    def __init__(self, in_channels, out_channels, 
+                 merge_mode='concat', up_mode='transpose'):
+        super(UpConv, self).__init__()
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.merge_mode = merge_mode
+        self.up_mode = up_mode
+
+        self.upconv = upconv2x2(self.in_channels, self.out_channels, 
+            mode=self.up_mode)
+
+        if self.merge_mode == 'concat':
+            self.conv1 = conv3x3(
+                2*self.out_channels, self.out_channels)
+        else:
+            # num of input channels to conv2 is same
+            self.conv1 = conv3x3(self.out_channels, self.out_channels)
+        self.conv2 = conv3x3(self.out_channels, self.out_channels)
+
+
+    def forward(self, from_down, from_up):
+        """ Forward pass
+        Arguments:
+            from_down: tensor from the encoder pathway
+            from_up: upconv'd tensor from the decoder pathway
         """
-        :param in_channels: is the number of input channels
-        :param out_channels: is the number of output channels
-        """
-        super().__init__()
-
-        # First $3 \times 3$ convolutional layer
-        self.first = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
-        self.act1 = nn.ReLU()
-        # Second $3 \times 3$ convolutional layer
-        self.second = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.act2 = nn.ReLU()
-
-    def forward(self, x: torch.Tensor):
-        # Apply the two convolution layers and activations
-        x = self.first(x)
-        x = self.act1(x)
-        x = self.second(x)
-        return self.act2(x)
-
-
-class DownSample(nn.Module):
-    """
-    ### Down-sample
-
-    Each step in the contracting path down-samples the feature map with
-    a $2 \times 2$ max pooling layer.
-    """
-
-    def __init__(self):
-        super().__init__()
-        # Max pooling layer
-        self.pool = nn.MaxPool2d(2)
-
-    def forward(self, x: torch.Tensor):
-        return self.pool(x)
-
-
-class UpSample(nn.Module):
-    """
-    ### Up-sample
-
-    Each step in the expansive path up-samples the feature map with
-    a $2 \times 2$ up-convolution.
-    """
-    def __init__(self, in_channels: int, out_channels: int):
-        super().__init__()
-
-        # Up-convolution
-        self.up = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
-
-    def forward(self, x: torch.Tensor):
-        return self.up(x)
-
-
-class CropAndConcat(nn.Module):
-    """
-    ### Crop and Concatenate the feature map
-
-    At every step in the expansive path the corresponding feature map from the contracting path
-    concatenated with the current feature map.
-    """
-    def forward(self, x: torch.Tensor, contracting_x: torch.Tensor):
-        """
-        :param x: current feature map in the expansive path
-        :param contracting_x: corresponding feature map from the contracting path
-        """
-
-        # Crop the feature map from the contracting path to the size of the current feature map
-        contracting_x = torchvision.transforms.functional.center_crop(contracting_x, [x.shape[2], x.shape[3]])
-        # Concatenate the feature maps
-        x = torch.cat([x, contracting_x], dim=1)
-        #
+        from_up = self.upconv(from_up)
+        if self.merge_mode == 'concat':
+            x = torch.cat((from_up, from_down), 1)
+        else:
+            x = from_up + from_down
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
         return x
 
 
 class UNet(nn.Module):
+    """ `UNet` class is based on https://arxiv.org/abs/1505.04597
+
+    The U-Net is a convolutional encoder-decoder neural network.
+    Contextual spatial information (from the decoding,
+    expansive pathway) about an input tensor is merged with
+    information representing the localization of details
+    (from the encoding, compressive pathway).
+
+    Modifications to the original paper:
+    (1) padding is used in 3x3 convolutions to prevent loss
+        of border pixels
+    (2) merging outputs does not require cropping due to (1)
+    (3) residual connections can be used by specifying
+        UNet(merge_mode='add')
+    (4) if non-parametric upsampling is used in the decoder
+        pathway (specified by upmode='upsample'), then an
+        additional 1x1 2d convolution occurs after upsampling
+        to reduce channel dimensionality by a factor of 2.
+        This channel halving happens with the convolution in
+        the tranpose convolution (specified by upmode='transpose')
     """
-    ## U-Net
-    """
-    def __init__(self, in_channels: int, out_channels: int):
+
+    def __init__(self, num_classes, in_channels, depth=5, 
+                 start_filts=64, up_mode='transpose', 
+                 merge_mode='concat'):
         """
-        :param in_channels: number of channels in the input image
-        :param out_channels: number of channels in the result feature map
+        Arguments:
+            in_channels: int, number of channels in the input tensor.
+                Default is 3 for RGB images.
+            depth: int, number of MaxPools in the U-Net.
+            start_filts: int, number of convolutional filters for the 
+                first conv.
+            up_mode: string, type of upconvolution. Choices: 'transpose'
+                for transpose convolution or 'upsample' for nearest neighbour
+                upsampling.
         """
-        super().__init__()
+        super(UNet, self).__init__()
 
-        # Double convolution layers for the contracting path.
-        # The number of features gets doubled at each step starting from $64$.
-        self.down_conv = nn.ModuleList([DoubleConvolution(i, o) for i, o in
-                                        [(in_channels, 64), (64, 128), (128, 256), (256, 512)]])
-        # Down sampling layers for the contracting path
-        self.down_sample = nn.ModuleList([DownSample() for _ in range(4)])
+        if up_mode in ('transpose', 'upsample'):
+            self.up_mode = up_mode
+        else:
+            raise ValueError("\"{}\" is not a valid mode for "
+                             "upsampling. Only \"transpose\" and "
+                             "\"upsample\" are allowed.".format(up_mode))
+    
+        if merge_mode in ('concat', 'add'):
+            self.merge_mode = merge_mode
+        else:
+            raise ValueError("\"{}\" is not a valid mode for"
+                             "merging up and down paths. "
+                             "Only \"concat\" and "
+                             "\"add\" are allowed.".format(up_mode))
 
-        # The two convolution layers at the lowest resolution (the bottom of the U).
-        self.middle_conv = DoubleConvolution(512, 1024)
+        # NOTE: up_mode 'upsample' is incompatible with merge_mode 'add'
+        if self.up_mode == 'upsample' and self.merge_mode == 'add':
+            raise ValueError("up_mode \"upsample\" is incompatible "
+                             "with merge_mode \"add\" at the moment "
+                             "because it doesn't make sense to use "
+                             "nearest neighbour to reduce "
+                             "depth channels (by half).")
 
-        # Up sampling layers for the expansive path.
-        # The number of features is halved with up-sampling.
-        self.up_sample = nn.ModuleList([UpSample(i, o) for i, o in
-                                        [(1024, 512), (512, 256), (256, 128), (128, 64)]])
-        # Double convolution layers for the expansive path.
-        # Their input is the concatenation of the current feature map and the feature map from the
-        # contracting path. Therefore, the number of input features is double the number of features
-        # from up-sampling.
-        self.up_conv = nn.ModuleList([DoubleConvolution(i, o) for i, o in
-                                      [(1024, 512), (512, 256), (256, 128), (128, 64)]])
-        # Crop and concatenate layers for the expansive path.
-        self.concat = nn.ModuleList([CropAndConcat() for _ in range(4)])
-        # Final $1 \times 1$ convolution layer to produce the output
-        self.final_conv = nn.Conv2d(64, out_channels, kernel_size=1)
+        self.num_classes = num_classes
+        self.in_channels = in_channels
+        self.start_filts = start_filts
+        self.depth = depth
 
-    def forward(self, x: torch.Tensor):
-        """
-        :param x: input image
-        """
-        # To collect the outputs of contracting path for later concatenation with the expansive path.
-        pass_through = []
-        # Contracting path
-        for i in range(len(self.down_conv)):
-            # Two $3 \times 3$ convolutional layers
-            x = self.down_conv[i](x)
-            # Collect the output
-            pass_through.append(x)
-            # Down-sample
-            x = self.down_sample[i](x)
+        self.down_convs = []
+        self.up_convs = []
 
-        # Two $3 \times 3$ convolutional layers at the bottom of the U-Net
-        x = self.middle_conv(x)
+        # create the encoder pathway and add to a list
+        for i in range(depth):
+            ins = self.in_channels if i == 0 else outs
+            outs = self.start_filts*(2**i)
+            pooling = True if i < depth-1 else False
 
-        # Expansive path
-        for i in range(len(self.up_conv)):
-            # Up-sample
-            x = self.up_sample[i](x)
-            # Concatenate the output of the contracting path
-            x = self.concat[i](x, pass_through.pop())
-            # Two $3 \times 3$ convolutional layers
-            x = self.up_conv[i](x)
+            down_conv = DownConv(ins, outs, pooling=pooling)
+            self.down_convs.append(down_conv)
 
-        # Final $1 \times 1$ convolution layer
-        x = self.final_conv(x)
+        # create the decoder pathway and add to a list
+        # - careful! decoding only requires depth-1 blocks
+        for i in range(depth-1):
+            ins = outs
+            outs = ins // 2
+            up_conv = UpConv(ins, outs, up_mode=up_mode,
+                merge_mode=merge_mode)
+            self.up_convs.append(up_conv)
 
-        #
+        self.conv_final = conv1x1(outs, self.num_classes)
+
+        # add the list of modules to current module
+        self.down_convs = nn.ModuleList(self.down_convs)
+        self.up_convs = nn.ModuleList(self.up_convs)
+
+        self.reset_params()
+
+    @staticmethod
+    def weight_init(m):
+        if isinstance(m, nn.Conv2d):
+            init.xavier_normal(m.weight)
+            init.constant(m.bias, 0)
+
+
+    def reset_params(self):
+        for i, m in enumerate(self.modules()):
+            self.weight_init(m)
+
+
+    def forward(self, x):
+        encoder_outs = []
+         
+        # encoder pathway, save outputs for merging
+        for i, module in enumerate(self.down_convs):
+            x, before_pool = module(x)
+            encoder_outs.append(before_pool)
+
+        for i, module in enumerate(self.up_convs):
+            before_pool = encoder_outs[-(i+2)]
+            x = module(before_pool, x)
+        
+        # No softmax is used. This means you need to use
+        # nn.CrossEntropyLoss is your training script,
+        # as this module includes a softmax already.
+        x = self.conv_final(x)
         return x
