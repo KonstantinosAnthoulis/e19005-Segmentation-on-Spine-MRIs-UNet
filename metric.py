@@ -71,8 +71,8 @@ class BinaryMetrics():
         self.activation = activation
 
     def _calculate_overlap_metrics(self, gt, pred):
-        output = pred.view(-1, )
-        target = gt.view(-1, ).float()
+        output = pred.reshape(-1)
+        target = gt.reshape(-1).float()
 
         tp = torch.sum(output * target)  # TP
         fp = torch.sum(output * (1 - target))  # FP
