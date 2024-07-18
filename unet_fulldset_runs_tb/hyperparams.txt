@@ -1,0 +1,6 @@
+batchsize=6
+lr=0.0001
+upmode = upsample
+loss=BCEWithLogits
+startfilts=32
+activation_func = ReLU
