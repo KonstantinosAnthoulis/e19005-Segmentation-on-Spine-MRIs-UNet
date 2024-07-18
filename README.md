@@ -4,5 +4,12 @@ Undergrad Thesis Konstantinos Anthoulis e19005 2023 2024 <br>
 Datatset & Challenge: https://spider.grand-challenge.org/ <br>
 
 ## Dependencies
-Το requirements.txt δεν είναι ακόμα έτοιμο, για την ώρα χρησιμοποιώ anaconda venv και χρησιμοποιώ pip install για τα dependencies <br>
-requirements.txt isn't valid for now, I'm using anaconda venv and installing libraries with pip install <br>
+Πριν από την εκτέλεση εντολής, αφού έχετε ανοίξει terminal στο virtual environment της επιλογής σας <br>
+Before running the command below, after running terminal on your virtual environment of choice <br>
+```
+pip install -r requirements.txt
+```
+πρώτα μπείτε στο αρχείο και βγάλετε το σχόλιο από την εντολή για ανάλογο install GPU/CPU <br>
+go in the file and remove the comment on the install you would like to perform depending on GPU/CPU setup <br>
+
+
