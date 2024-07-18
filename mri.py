@@ -38,12 +38,7 @@ class Mri:
         if(mri_a.shape[2] > mri_a.shape[1]): #bring images to vertical orientation
           mri_a = np.transpose(mri_a, (0, 2, 1))
         '''
-        #Remove slices with no corresponding mask in label 
-        image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
-
-        #Crop around the ROI 
-        image_a, label_a = array_transforms.crop_zero(image_a, label_a)
-
+       
         #Convert to float32, helps with creating tensors down the line 
         mri_a_float32 = mri_a.astype(dtype = np.float32)
 
