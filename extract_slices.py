@@ -10,7 +10,8 @@ import sys
 
 #Import array transforms for cropping
 from transforms import array_transforms
-import mri
+#import Mri class
+from mri import Mri
 
 #Set seed
 np.random.seed(46)
@@ -62,35 +63,40 @@ test_dirlen = image_test_dirlen
 
 #Extracting slices for training images/labels
 for idx in range(0, train_dirlen):
-#TODO continue here-----------------------------------------------------
-  img_path = train_img_dir.joinpath(image_train_dir_list[idx])
-  label_path = train_label_dir.joinpath(label_train_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
+    img_path = train_img_dir.joinpath(image_train_dir_list[idx])
+    label_path = train_label_dir.joinpath(label_train_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
 
-  #print(image_train_dir_list[idx])
-  #print(type(image_train_dir_list[idx]))
+    #Get 3D array after pre-processing
+    image = Mri(img_path, is_label= False, is_train_set= True)
+    label = Mri(label_path, is_label= True, is_train_set= True) 
 
-  '''
-  img_path = local_img_idr.joinpath(image_dir_list[idx])
-  label_path = local_label_dir.joinpath(label_dir_list[idx]) #first part before joinpath is pathlib.Path, second part is the directory of the file 
-  '''
-  image = Mri(img_path, is_label= False, is_train_set= True)
-  label = Mri(label_path, is_label= True, is_train_set= True) #for resampling
-  
-  #print("hu_a dims", image.hu_a.shape)
+    #Copy
+    image_a = image.hu_a
+    label_a = label.hu_a
 
-  image_a = image.hu_a
-  label_a = label.hu_a
+    #Remove slices with no corresponding mask in label 
+    image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
 
-  #print("last image shape before remove empty", image_a.shape)
+    #Crop around the ROI 
+    image_a, label_a = array_transforms.crop_zero(image_a, label_a)
+    
+    #Extract slices after processing to corresponding directories 
+    array_transforms.extract_slices(image_a, image_train_dir_list[idx], train_img_slice_dir) 
+    array_transforms.extract_slices(label_a, label_train_dir_list[idx], train_label_slice_dir) 
 
-  #remove empty slices
-  image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
+#Extracting slices for training images/labels
+for idx in range(0, train_dirlen):
+    img_path = train_img_dir.joinpath(image_train_dir_list[idx])
+    label_path = train_label_dir.joinpath(label_train_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
 
-  
-  '''
-  #zero crop
-  image_a, label_a = array_transforms.crop_zero(image_a, label_a)
-  '''
-  
-  array_transforms.extract_slices(image_a, image_train_dir_list[idx], dummy_train_img_slice_dir) 
-  array_transforms.extract_slices(label_a, label_train_dir_list[idx], dummy_train_label_slice_dir) 
+    #Get 3D array after pre-processing
+    image = Mri(img_path, is_label= False, is_train_set= True)
+    label = Mri(label_path, is_label= True, is_train_set= True) 
+
+    #Copy
+    image_a = image.hu_a
+    label_a = label.hu_a
+
+    #Extract slices after processing to corresponding directories 
+    array_transforms.extract_slices(image_a, image_train_dir_list[idx], train_img_slice_dir) 
+    array_transforms.extract_slices(label_a, label_train_dir_list[idx], train_label_slice_dir) 
