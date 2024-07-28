@@ -12,12 +12,15 @@ from transforms import mri_transforms, array_transforms
     #path: file path to .mha image
     #is_label (T/F): checks if the file is image or masks to apply appropriate resampling method 
     #is_train_set (T/F): checks if the image will be part of the training or testing dataset
-    #not resampling test datasets to better resemble real world data   
+      #not resampling test datasets to better resemble real world data   
 class Mri:
     def __init__(self, path, is_label, is_train_set):
 
         #Read 3D image from path, explicitly setting IO Reader just in case 
         mri_mha = sitk.ReadImage(path, imageIO = "MetaImageIO") 
+
+        #transpose so that idx first 
+        mri_mha = mri_transforms.transpose(mri_mha)
 
         #Resample accordingly if part of training set
         if(is_train_set):

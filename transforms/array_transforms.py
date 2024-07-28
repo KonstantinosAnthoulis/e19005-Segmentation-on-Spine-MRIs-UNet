@@ -48,26 +48,24 @@ def remove_empty_slices(img_a, label_a):
 
 
 def extract_slices(arr, input_mri_path, target_slice_dir):
-    #First transmute array to common format [slice idx, row, col] 
 
-    print("aray shape", arr.shape)
-    #Checking for the smallest dimension which is always the idx dim and transposing accordingly
-    if(arr.shape[0] > arr.shape[1] or arr.shape[0] > arr.shape[2]):
-        if(arr.shape[1] < arr.shape[2]):
-            arr = np.transpose(arr, (1, 0, 2))
-        elif (arr.shape[2] < arr.shape[1]): 
-            arr = np.transpose(arr, (2, 0, 1))
-    
-   
     #For every 2D slice in the 3D array
     for idx in range(arr.shape[0]):
+        #Get 2D Array
+        idx_arr = arr[idx, : , :]
+
+        #Vertical and horizontal flips because resampling ode screws things up for some reason
+        idx_arr = np.flipud(idx_arr) 
+        idx_arr = np.fliplr(idx_arr)
+
         #Get 2D image
-        idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+        idx_slice = sitk.GetImageFromArray(idx_arr)
         
         #Small debug print to ensure correct dimensions (should be triple digits in both X and Y)
+        
         if(idx == 0):
-            print("dims of exported slices:", idx_slice.GetSize())
-
+            print("dims of exported slices:", idx_slice.GetSize(), "for" , input_mri_path)
+       
         #Naming convention + path for new file
         input_path_split = input_mri_path.split(".")
         pre = input_path_split[0] #1_t1
@@ -86,16 +84,15 @@ def crop_zero(img_a, label_a):
     col_count = 0
 
     #counting 0 rows, using this util for now but there is a chance it could find and delete cols/rows of 0 within the region of interest
-    for idx_row in range(label_a.shape[0]): #for rows
+    for idx_row in range(label_a.shape[1]): #for rows
          if  np.any(label_a[idx_row, :]):
             row_count = row_count + 1
              
 
-    for idx_col in range(label_a.shape[1]): #for cos
+    for idx_col in range(label_a.shape[2]): #for cols
         if  np.any(label_a[: ,idx_col]):
             col_count = col_count +1
                 
-
 
     #print("y max nonzero", y_max_nonzero)
     #print("x max", x_max_nonzero)
@@ -116,8 +113,8 @@ def crop_zero(img_a, label_a):
     else:  
         out_col = col_count
     
-    center_row = label_a.shape[0]//2 - out_row//2
-    center_col = label_a.shape[1]//2 - out_col//2
+    center_row = label_a.shape[1]//2 - out_row//2
+    center_col = label_a.shape[2]//2 - out_col//2
 
     out_img_a = np.empty([out_row, out_col])
     out_label_a = np.empty([out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
@@ -132,7 +129,6 @@ def crop_zero(img_a, label_a):
     
     return out_img_a, out_label_a 
 
-    
 
 
 
