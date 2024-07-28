@@ -48,12 +48,27 @@ def remove_empty_slices(img_a, label_a):
 
 
 def extract_slices(arr, input_mri_path, target_slice_dir):
+    #First transmute array to common format [slice idx, row, col] 
 
+    print("aray shape", arr.shape)
+    #Checking for the smallest dimension which is always the idx dim and transposing accordingly
+    if(arr.shape[0] > arr.shape[1] or arr.shape[0] > arr.shape[2]):
+        if(arr.shape[1] < arr.shape[2]):
+            arr = np.transpose(arr, (1, 0, 2))
+        elif (arr.shape[2] < arr.shape[1]): 
+            arr = np.transpose(arr, (2, 0, 1))
+    
+   
+    #For every 2D slice in the 3D array
     for idx in range(arr.shape[0]):
+        #Get 2D image
         idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+        
+        #Small debug print to ensure correct dimensions (should be triple digits in both X and Y)
+        if(idx == 0):
+            print("dims of exported slices:", idx_slice.GetSize())
 
-        print(idx_slice.GetSize())
-
+        #Naming convention + path for new file
         input_path_split = input_mri_path.split(".")
         pre = input_path_split[0] #1_t1
         post = "_" + str(idx) + "." + input_path_split[1] #_0.mha for 1st slice of image 1_t1

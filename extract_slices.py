@@ -17,16 +17,25 @@ from mri import Mri
 np.random.seed(46)
 
 #MRI (.mha) file directories, replace paths as needed 
-#rain_img_dir = pathlib.Path(r"")
+#train_img_dir = pathlib.Path(r"")
 #train_label_dir = pathlib.Path(r"")
 #test_img_dir = pathlib.Path(r"")
 #test_label_dir= pathlib.Path(r"")
 
+#Laptop Testing
+
+train_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_images")
+train_label_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_labels")
+test_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_images")
+test_label_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_labels")
+
+#Desktop Testing
+'''
 train_img_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/train_images")
 train_label_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/train_labels")
 test_img_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/test_images")
 test_label_dir= pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/test_labels")
-
+'''
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
 #NOTE: be careful to the paths set because the generated images will take up A LOT of space 
 #train_img_slice_dir = pathlib.Path(r"")
@@ -34,11 +43,21 @@ test_label_dir= pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/test_l
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
+#Laptop Testing
+
+train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_label_slices")
+
+
+#Desktop Testing
+'''
 train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_image_slices")
 train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_label_slices")
 test_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/test_image_slices")
 test_label_slice_dir= pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/test_label_slices")
-
+'''
 #Get lists of the files in the directories 
 image_train_dir_list = os.listdir(train_img_dir) 
 label_train_dir_list = os.listdir(train_label_dir)
@@ -70,6 +89,7 @@ train_dirlen = image_train_dirlen
 test_dirlen = image_test_dirlen
 
 print("train dirlen", train_dirlen)
+print("test dirlen", test_dirlen)
 
 #NOTE: iterating 2 loops, one for training data one for testing data, due to different lengths and pre-processing on training data 
 
@@ -85,8 +105,6 @@ for idx in range(0, train_dirlen):
     #Copy
     image_a = image.hu_a
     label_a = label.hu_a
-
-    print("image a" ,image_a)
 
     #Remove slices with no corresponding mask in label 
     image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
@@ -120,6 +138,9 @@ for idx in range(0, train_dirlen):
     #Extract slices after processing to corresponding directories 
     array_transforms.extract_slices(image_a, image_train_dir_list[idx], train_img_slice_dir) 
     array_transforms.extract_slices(label_a, label_train_dir_list[idx], train_label_slice_dir) 
+
+    if(idx == 1):
+        break
 
 #Extracting slices for TEST images/labels
 for idx in range(0, test_dirlen):
