@@ -30,7 +30,7 @@ def resample_img(itk_image, out_spacing, is_label):
 
     return resample.Execute(itk_image)
 
-#Transpose 3d image to correct coordinates 
+#Transpose 3d image to correct coordinates [slice idx, row ,col]
 def transpose(image):
     size = image.GetSize()
     if size[0] > size[1] or size[0] > size[2]:
