@@ -22,8 +22,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_images")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_labels")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -72,29 +72,26 @@ for idx in range(0, dirlen):
   image_a = image.hu_a
   label_a = label.hu_a
 
-  #Crop both arrays based on ROI of label 
-  image_a_cropzero, label_a_cropzero = array_transforms.crop_zero(image_a, label_a)
-
   #Comb through the dataset to find max ROI dimensions as well as min/max image values for tensor normalisation later 
   if(idx ==0):
     
-    image_tensor_min = np.min(image_a_cropzero)
-    image_tensor_max = np.max(label_a_cropzero)
-    label_tensor_min = np.min(label_a_cropzero)
-    label_tensor_max = np.max(label_a_cropzero)
+    image_tensor_min = np.min(image_a)
+    image_tensor_max = np.max(label_a)
+    label_tensor_min = np.min(label_a)
+    label_tensor_max = np.max(label_a)
     
     unique_masks_a = np.unique(label_a)
   else:
     
-    if(np.min(image_a_cropzero) < image_tensor_min):
-      image_tensor_min = np.min(image_a_cropzero)
+    if(np.min(image_a) < image_tensor_min):
+      image_tensor_min = np.min(image_a)
       image_tensor_min_dir = img_path
-    if(np.min(label_a_cropzero) < label_tensor_min):
-      label_tensor_min = np.min(label_a_cropzero)
-    if(np.max(image_a_cropzero) > image_tensor_max):
-      image_tensor_max = np.max(image_a_cropzero)
-    if(np.max(label_a_cropzero) > label_tensor_max):
-      label_tensor_max = np.max(label_a_cropzero)
+    if(np.min(label_a) < label_tensor_min):
+      label_tensor_min = np.min(label_a)
+    if(np.max(image_a) > image_tensor_max):
+      image_tensor_max = np.max(image_a)
+    if(np.max(label_a) > label_tensor_max):
+      label_tensor_max = np.max(label_a)
     
   #Find amount of unique masks for one-hot encoding 
     current_masks_a = np.unique(label_a)
@@ -102,8 +99,8 @@ for idx in range(0, dirlen):
       unique_masks_a = current_masks_a
   
   #Add values to lists
-  row_list.append(image_a_cropzero.shape[0]) 
-  col_list.append(image_a_cropzero.shape[1])  
+  row_list.append(image_a.shape[0]) 
+  col_list.append(image_a.shape[1])  
   
 #Get max values from lists
 row_dim_max = max(row_list)
