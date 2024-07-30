@@ -22,8 +22,13 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_images")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_labels")
+#Desktop
+#train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_images")
+#train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_labels")
+
+#Work Desktop 
+train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_cropped_images")
+train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_cropped_labels")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -161,7 +166,9 @@ def convert_to_native_types(obj):
 data = {key: convert_to_native_types(value) for key, value in data.items()}
 
 # Set the path for the JSON file
-file_path = "D:/Spider Mini Set Check Data Pipeline/tensor_data.json"
+#file_path = "D:/Spider Mini Set Check Data Pipeline/tensor_data.json"
+
+file_path = "C:/Users/user/Desktop/Spider test/data.json"
 
 # Save the dictionary to a JSON file
 with open(file_path, "w") as json_file:
