@@ -43,6 +43,7 @@ train_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_labels"
 test_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_images")
 test_label_dir= pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_labels")
 
+#TODO Relative Path
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
 #NOTE: be careful to the paths set because the generated images will take up A LOT of space 
