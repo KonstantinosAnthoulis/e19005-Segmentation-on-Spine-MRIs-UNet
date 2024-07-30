@@ -11,7 +11,7 @@ import sys
 #Import array transforms for cropping
 from transforms import array_transforms
 #import Mri class
-from mri import Mri
+from image import mri 
 
 #Set seed
 np.random.seed(46)
@@ -105,8 +105,8 @@ for idx in range(0, train_dirlen):
     label_path = train_label_dir.joinpath(label_train_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
 
     #Get 3D array after pre-processing
-    image = Mri(img_path, is_label= False, is_train_set= True)
-    label = Mri(label_path, is_label= True, is_train_set= True) 
+    image = mri.Mri(img_path, is_label= False, is_train_set= True)
+    label = mri.Mri(label_path, is_label= True, is_train_set= True) 
 
     #Copy
     image_a = image.hu_a
@@ -132,8 +132,8 @@ for idx in range(0, test_dirlen):
     label_path = test_label_dir.joinpath(label_test_dir_list[idx]) #first part before joinpath is pathlib.Path, second part is the directory of the file 
 
     #Get 3D array after pre-processing
-    image = Mri(img_path, is_label= False, is_train_set= False)
-    label = Mri(label_path, is_label= True, is_train_set= False) 
+    image = mri.Mri(img_path, is_label= False, is_train_set= False)
+    label = mri.Mri(label_path, is_label= True, is_train_set= False) 
 
     #Copy
     image_a = image.hu_a

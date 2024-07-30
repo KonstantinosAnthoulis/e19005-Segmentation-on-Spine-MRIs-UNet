@@ -8,7 +8,7 @@ import json
 
 
 #Import MRI Slice class
-from mri_slice import Mri_Slice
+from image import mri_slice
 #Array transforms for cropping
 from transforms import array_transforms
 
@@ -70,8 +70,8 @@ for idx in range(0, dirlen):
   lbl_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
  
   #Read image and label
-  image = Mri_Slice(img_path)
-  label = Mri_Slice(lbl_path)
+  image = mri_slice.Mri_Slice(img_path)
+  label = mri_slice.Mri_SliceMri_Slice(lbl_path)
 
   #Get arrays
   image_a = image.hu_a

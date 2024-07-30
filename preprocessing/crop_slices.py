@@ -7,7 +7,7 @@ import SimpleITK as sitk
 import sys
 
 #Import MRI Slice class
-from mri_slice import Mri_Slice
+from image import mri_slice
 #Array transforms for cropping
 from transforms import array_transforms
 
@@ -19,7 +19,6 @@ from transforms import array_transforms
 #Work Desktop Testing 
 train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_images")
 train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_labels")
-
 
 #Directories to write the cropped slices to 
 #Change as needed 
@@ -61,8 +60,8 @@ for idx in range(0, dirlen):
     print(image_dir_list[idx])
 
     #Read image and label
-    image = Mri_Slice(img_path)
-    label = Mri_Slice(lbl_path)
+    image = mri_slice.Mri_Slice(img_path)
+    label = mri_slice.Mri_Slice(lbl_path)
 
     #Get arrays
     image_a = image.hu_a

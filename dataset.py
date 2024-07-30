@@ -8,8 +8,9 @@ from natsort import natsorted
 import json
 
 from transforms import tensor_transforms
-from mri_slice import Mri_Slice
-from one_hot import one_hot_encoding
+from image import mri_slice
+from preprocessing import one_hot
+
 
 
 #Set GPU/Cuda Device to run model on
@@ -42,7 +43,7 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 
-value_map = one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
+value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
 
 class SpiderDataset(Dataset):
     def __init__(self, labels_dir, img_dir, transform=None, target_transform=None):
@@ -64,8 +65,8 @@ class SpiderDataset(Dataset):
         img_path = self.img_dir.joinpath(image_dir_list[idx])
         label_path = self.labels_dir.joinpath(label_dir_list[idx])
 
-        image = Mri_Slice(img_path)
-        label = Mri_Slice(label_path)
+        image = mri_slice.Mri_Slice(img_path)
+        label = mri_slice.Mri_Slice(label_path)
 
         image_a = image.hu_a
         label_a = label.hu_a
