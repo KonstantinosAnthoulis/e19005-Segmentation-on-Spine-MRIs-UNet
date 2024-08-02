@@ -11,8 +11,6 @@ from transforms import tensor_transforms
 from image import mri_slice
 from preprocessing import one_hot
 
-
-
 #Set GPU/Cuda Device to run model on
 device = (
     "cuda"

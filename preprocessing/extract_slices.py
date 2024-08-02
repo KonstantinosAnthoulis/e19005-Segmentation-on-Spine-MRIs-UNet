@@ -13,8 +13,8 @@ from transforms import array_transforms
 #import Mri class
 from image import mri 
 
-#Set seed
-np.random.seed(46)
+
+
 
 #MRI (.mha) file directories, replace paths as needed 
 #train_img_dir = pathlib.Path(r"your/path/here")
