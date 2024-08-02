@@ -6,6 +6,7 @@ import SimpleITK as sitk
 import os
 from natsort import natsorted 
 import json
+import numpy as np 
 
 from transforms import tensor_transforms
 from image import mri_slice
@@ -21,10 +22,7 @@ device = (
 )
 print(f"Using {device} device")
 
-#TODO import .json
-#TODO have full dset json inside local directory in repo
-
-json_path = "C:/Users/user/Desktop/Spider test/data.json"
+json_path = "tensor_data/data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:

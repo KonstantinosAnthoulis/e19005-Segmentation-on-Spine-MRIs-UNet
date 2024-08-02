@@ -16,18 +16,16 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"your/path/here")
 #train_label_slice_dir = pathlib.Path(r"")
 
-#Work Desktop Testing 
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_images")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_labels")
+train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_slices")
 
 #Directories to write the cropped slices to 
 #Change as needed 
 #train_cropped_img_slice_dir = pathlib.Path(r"")
 #train_cropped_label_slice_dir = pathlib.Path(r"")
 
-#Work Desktop Testing 
-train_cropped_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_cropped_images")
-train_cropped_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_cropped_labels")
+train_cropped_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_cropped_slices")
+train_cropped_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_cropped_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir

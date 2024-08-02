@@ -2,12 +2,8 @@
 
 #Dependencies 
 import torch
-import torchvision
 from torch import nn
 from torch.utils.data import DataLoader
-from torchvision import datasets
-from torch.utils.data import Dataset
-from torchvision.transforms import ToTensor
 import json 
 
 import SimpleITK as sitk
@@ -24,6 +20,9 @@ from natsort import natsorted
 
 from dataset import SpiderDataset
 import metric
+from models import unet
+
+from epoch import train_one_epoch
 
 #Set GPU/Cuda Device to run model on
 device = (
@@ -37,7 +36,7 @@ print(f"Using {device} device")
 
 np.random.seed(46)
 
-json_path = "C:/Users/user/Desktop/Spider test/data.json"
+json_path = "tensor_data/data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -54,11 +53,11 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Directories test Work Desktop 
-train_img_slice_dir = pathlib.Path("C:/Users/user/Desktop/Spider test/train_slice_cropped_images")
-train_label_slice_dir = pathlib.Path("C:/Users/user/Desktop/Spider test/train_slice_cropped_labels")
+train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_cropped_slices")
+train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_cropped_slices")
 
-test_img_slice_dir = pathlib.Path("C:/Users/user/Desktop/Spider test/test_slice_images")
-test_label_slice_dir= pathlib.Path("C:/Users/user/Desktop/Spider test/test_slice_labels")
+test_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"spider_toy_dset_slices/test_label_slices")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
@@ -80,8 +79,6 @@ dummy_test_set = SpiderDataset(test_label_slice_dir, test_img_slice_dir)
 print("train dataset len",dummy_train_set.__len__())
 print("test dataset len",dummy_test_set.__len__())
 
-from models import unet 
-
 input_channels = 1 #Hounsfield scale
 output_channels = masks_no #one for every class 0-9 vertebrae 10 spinal canal 11-19 ivd
 start_filts = 16 #unet filters 
@@ -94,7 +91,7 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 4 #setting this to 3 epochs per training session takes about 6-8 hours
+epochs = 1 #setting this to 3 epochs per training session takes about 6-8 hours
 lr = 0.0001 #0.001 too large 
 batchsize = 6 #max on local machine
 loss_func = nn.BCEWithLogitsLoss() 
@@ -120,4 +117,146 @@ metric_calculator = metric.SegmentationMetrics(average=True, ignore_background=T
 
 metric_calculator_binary = metric.BinaryMetrics(activation='sigmoid') #for calculating spinal canal metrics since it's only 1 class
 
-#TODO epoch.py for 1 epoch 
+#Training Loop
+    #Training loop and epoch code from official Pytorch documentation link: ++
+
+from datetime import datetime
+from torch.utils.tensorboard import SummaryWriter
+
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+#writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
+writer = SummaryWriter('runs/spider_full_batchsize_{}_lr_{}_trainses_0_{}'.format(batchsize, lr, timestamp))
+epoch_number = 0 #Intial epoch for training 
+
+
+best_vloss = 1_000_000.
+
+for epoch in range(epochs):
+    print('EPOCH {}:'.format(epoch_number + 1))
+
+    # Make sure gradient tracking is on, and do a pass over the data
+    model.train(True)
+    avg_loss = train_one_epoch(epoch_number, writer, optim = optim, loss_func = loss_func, train_dataloader=train_dataloader, model = model,
+                               metric_calculator=metric_calculator, metric_calculator_binary=metric_calculator_binary, device = device)
+    #print("avg loss in epoch", avg_loss)
+
+    running_vloss = 0.0
+    running_vaccu = 0.0
+    running_vdice = 0.0
+
+    vert_running_vaccu = 0.0
+    vert_running_vdice = 0.0
+    
+    sc_running_vaccu = 0.0
+    sc_running_vdice = 0.0
+
+    ivd_running_vaccu = 0.0
+    ivd_running_vdice = 0.0
+    # Set the model to evaluation mode, disabling dropout and using population
+    # statistics for batch normalization.
+    model.eval()
+
+    # Disable gradient computation and reduce memory consumption.
+    with torch.no_grad():
+        for i, vdata in enumerate(test_dataloader):
+            vinputs, vlabels = vdata
+
+            voutputs = model(vinputs)
+            vloss = loss_func(voutputs, vlabels)
+            
+            vaccu, vdice, vprec, vrecall = metric_calculator(vlabels, voutputs)
+
+            #Vertebrae Metrics (0-9)
+            vert_vlabels = vlabels[:, :9, :, :]
+            vert_voutputs = voutputs[:, :9, :, :]
+            vert_vaccu, vert_vdice, vert_vprec, vert_vrecall = metric_calculator(vert_vlabels, vert_voutputs)
+
+            #Spinal Canal Metrics (10)
+            sc_vlabels = vlabels[:, 10, :, :].unsqueeze(1)
+            sc_voutputs = voutputs[:, 10, :, :].unsqueeze(1)
+            sc_vaccu, sc_vdice, sc_vprec, sv_vspecif, sc_vrecall = metric_calculator_binary(sc_vlabels, sc_voutputs)
+
+            #IVD Metrics (11-19)
+            ivd_vlabels = vlabels[:, -9:, :, :]
+            ivd_voutputs = voutputs[:, -9:, :, :]
+            ivd_vaccu, ivd_vdice, ivd_vprec, ivd_vrecall = metric_calculator(ivd_vlabels, ivd_voutputs)
+
+
+            running_vloss += vloss
+            running_vaccu += vaccu
+            running_vdice += vdice
+
+            vert_running_vaccu += vert_vaccu
+            vert_running_vdice += vert_vdice
+
+            sc_running_vaccu += sc_vaccu
+            sc_running_vdice += vert_vdice
+
+            ivd_running_vaccu += ivd_vaccu
+            ivd_running_vdice += ivd_vdice
+
+
+
+    avg_vloss = running_vloss / (i + 1)
+    avg_vaccu = running_vaccu / (i + 1)
+    avg_vdice = running_vdice / (i + 1)
+
+    vert_avg_vaccu = vert_running_vaccu / (i + 1)
+    vert_avg_vdice = vert_running_vdice / (i + 1)
+
+    sc_avg_vaccu = sc_running_vaccu / (i + 1)
+    sc_avg_vdice = sc_running_vdice / (i + 1)
+
+    ivd_avg_vaccu = ivd_running_vaccu / (i + 1)
+    ivd_avg_vdice = ivd_running_vdice / (i + 1)
+
+
+    #print('LOSS train {} valid {}'.format(avg_loss, avg_vloss))
+
+    # Log the running loss averaged per batch
+    # for both training and validation
+    
+    writer.add_scalars('Loss/train vs validation',
+                    { 'Training' : avg_loss, 'Validation' : avg_vloss},
+                    epoch_number + 1)
+    
+    writer.add_scalars('General/accuracy_validation',
+                    {'Accuracy': avg_vaccu},
+                    epoch_number + 1)
+
+    writer.add_scalars('General/dice_validation',
+                    {'Dice': avg_vdice},
+                    epoch_number + 1)
+    #vert
+    writer.add_scalars('Vertebrae/accuracy_validation',
+                    {'Accuracy': vert_avg_vaccu},
+                    epoch_number + 1)
+
+    writer.add_scalars('Vertebrae/dice_validation',
+                    {'Dice': vert_avg_vdice},
+                    epoch_number + 1)
+    #spinal canal
+    writer.add_scalars('Spinal Canal/accuracy_validation',
+                    {'Accuracy': sc_avg_vaccu},
+                    epoch_number + 1)
+
+    writer.add_scalars('Spinal Canal/dice_validation',
+                    {'Dice': sc_avg_vdice},
+                    epoch_number + 1)
+    #ivd
+    writer.add_scalars('Intervertebral Discs/accuracy_validation',
+                    {'Accuracy': ivd_avg_vaccu},
+                    epoch_number + 1)
+
+    writer.add_scalars('Intervertebral Discs/dice_validation',
+                    {'Dice': ivd_avg_vdice},
+                    epoch_number + 1)
+    
+    writer.flush()
+    
+    # Track best performance, and save the model's state    
+    model_path = 'tensorboard_runs/relativepath_testing/spider_model_{}_{}'.format(timestamp, epoch_number)
+    
+    torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
+        
+    epoch_number += 1

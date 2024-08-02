@@ -13,57 +13,31 @@ from transforms import array_transforms
 #import Mri class
 from image import mri 
 
-
-
-
 #MRI (.mha) file directories, replace paths as needed 
 #train_img_dir = pathlib.Path(r"your/path/here")
 #train_label_dir = pathlib.Path(r"")
 #test_img_dir = pathlib.Path(r"")
 #test_label_dir= pathlib.Path(r"")
 
-#Laptop Testing
-'''
-train_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_images")
-train_label_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_labels")
-test_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_images")
-test_label_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_labels")
-'''
-#Desktop Testing
-'''
-train_img_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/train_images")
-train_label_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/train_labels")
-test_img_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/test_images")
-test_label_dir= pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/mha/test_labels")
-'''
-#Work Destop Testing =
-
-train_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_images")
-train_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_labels")
-test_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_images")
-test_label_dir= pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_labels")
-
 #TODO Relative Path
+train_img_dir = pathlib.Path(r"spider_toy_dset/train_images")
+train_label_dir = pathlib.Path(r"spider_toy_dset/train_labels")
+test_img_dir = pathlib.Path(r"spider_toy_dset/test_images")
+test_label_dir= pathlib.Path(r"spider_toy_dset/test_labels")
+
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
 #NOTE: be careful to the paths set because the generated images will take up A LOT of space 
-#train_img_slice_dir = pathlib.Path(r"")
+#train_img_slice_dir = pathlib.Path(r"your/path/here")
 #train_label_slice_dir = pathlib.Path(r"")
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
-#Laptop Testing
-'''
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Test/test_label_slices")
-'''
-#Work Desktop Testing
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_images")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/train_slice_labels")
-test_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_slice_images")
-test_label_slice_dir= pathlib.Path(r"C:/Users/user/Desktop/Spider test/test_slice_labels")
+train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"spider_toy_dset_slices/test_label_slices")
+
 
 #Get lists of the files in the directories 
 image_train_dir_list = os.listdir(train_img_dir) 
