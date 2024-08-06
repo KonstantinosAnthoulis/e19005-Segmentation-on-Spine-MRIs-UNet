@@ -7,25 +7,19 @@ import SimpleITK as sitk
 import sys
 
 #Import MRI Slice class
-from image import mri_slice
+from image import Mri_Slice
 #Array transforms for cropping
 from transforms import array_transforms
 
-#Directories of uncropped slices train set 
-#Change as needed 
-#train_img_slice_dir = pathlib.Path(r"your/path/here")
-#train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_slices")
 
-#Directories to write the cropped slices to 
-#Change as needed 
-#train_cropped_img_slice_dir = pathlib.Path(r"")
-#train_cropped_label_slice_dir = pathlib.Path(r"")
+#Uncropped slice directories
+train_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/train_label_slices")
 
-train_cropped_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_cropped_slices")
-train_cropped_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_cropped_slices")
+#Directories to write cropped images to
+train_cropped_img_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_images")
+train_cropped_label_slice_dir = pathlib.Path(r"D:/Spider Mini Set Check Data Pipeline/cropped/train_labels")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -50,7 +44,7 @@ if(dirlen_image != dirlen_label):
 dirlen = dirlen_image
 
 for idx in range(0, dirlen):
-
+   
     #Get image and corresponding label paths
     img_path = image_path.joinpath(image_dir_list[idx])
     lbl_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
@@ -58,8 +52,8 @@ for idx in range(0, dirlen):
     print(image_dir_list[idx])
 
     #Read image and label
-    image = mri_slice.Mri_Slice(img_path)
-    label = mri_slice.Mri_Slice(lbl_path)
+    image = Mri_Slice(img_path)
+    label = Mri_Slice(lbl_path)
 
     #Get arrays
     image_a = image.hu_a

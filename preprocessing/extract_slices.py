@@ -19,7 +19,6 @@ from image import mri
 #test_img_dir = pathlib.Path(r"")
 #test_label_dir= pathlib.Path(r"")
 
-#TODO Relative Path
 train_img_dir = pathlib.Path(r"spider_toy_dset/train_images")
 train_label_dir = pathlib.Path(r"spider_toy_dset/train_labels")
 test_img_dir = pathlib.Path(r"spider_toy_dset/test_images")

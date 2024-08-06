@@ -69,6 +69,7 @@ class SpiderDataset(Dataset):
 
         #value mapping label tensor 0-19
         label_a = value_map(label_a)
+        print("array label unique", np.unique(label_a))
 
         image_tensor = torch.from_numpy(image_a)
         label_tensor = torch.from_numpy(label_a)
@@ -84,9 +85,10 @@ class SpiderDataset(Dataset):
         image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
         #label_tensor = (label_tensor - label_tensor_min) / (label_tensor_max - label_tensor_min) #INTS HERE DO NOT NORMALISE 
 
-        #one hot encoding label tensor BUG FIX
-        #one hot label, this works only if the range on the label tensors is from 0 to 19 steps of 1 
-        label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes= masks_no) #resulting shape is torch.Size([8, 20, 448, 224]
+        print(label_tensor.min(), label_tensor.max())
+
+        #one hot label, this works only if the range on the label tensors is from 0 to x steps of 1 
+        label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes= masks_no) 
 
         label_tensor = label_tensor.float()
         #print("tensor dims", image_tensor.shape)
@@ -101,10 +103,9 @@ class SpiderDataset(Dataset):
         label_tensor = torch.permute(label_tensor, (2, 0, 1))
 
         #remove backround (0) channel in channel dim of label tensor 
-        
         label_tensor = label_tensor[1:, :, :]  
-        
-        #print("tensor shape after removing first channel 2nd dim", label_tensor.shape)
+       
+        print("tensor shape after removing first channel 2nd dim", label_tensor.shape)
 
         label_flattened = label_tensor.flatten()
         #print("label tensor unique values", torch.unique(label_flattened))
@@ -112,7 +113,11 @@ class SpiderDataset(Dataset):
         image_tensor = image_tensor.to(device)
         label_tensor = label_tensor.to(device)
 
-        #print(image_tensor.shape)
+
+        #tensor shapes going in 
+        print(image_tensor.shape)
+        print(label_tensor.shape)
+
         return image_tensor, label_tensor
 
 

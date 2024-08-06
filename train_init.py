@@ -18,11 +18,11 @@ import pathlib
 
 from natsort import natsorted
 
-from dataset import SpiderDataset
-import metric
+from training import dataset
+from training import metric
 from models import unet
 
-from epoch import train_one_epoch
+from training import epoch as ep #not to conlfict with var name in loop
 
 #Set GPU/Cuda Device to run model on
 device = (
@@ -72,15 +72,15 @@ label_dir_list = natsorted(label_dir_list)
 
 dirlen = len(image_dir_list)
 
-dummy_train_set = SpiderDataset(train_label_slice_dir, train_img_slice_dir)
+dummy_train_set = dataset.SpiderDataset(train_label_slice_dir, train_img_slice_dir)
 
-dummy_test_set = SpiderDataset(test_label_slice_dir, test_img_slice_dir)
+dummy_test_set = dataset.SpiderDataset(test_label_slice_dir, test_img_slice_dir)
 
 print("train dataset len",dummy_train_set.__len__())
 print("test dataset len",dummy_test_set.__len__())
 
 input_channels = 1 #Hounsfield scale
-output_channels = masks_no #one for every class 0-9 vertebrae 10 spinal canal 11-19 ivd
+output_channels = masks_no - 1 #-1 not to count in backround 
 start_filts = 16 #unet filters 
 up_mode = 'upsample' #options are either 'upsample' for NN upsampling or 'transpose' for transpose conv
 
@@ -136,7 +136,7 @@ for epoch in range(epochs):
 
     # Make sure gradient tracking is on, and do a pass over the data
     model.train(True)
-    avg_loss = train_one_epoch(epoch_number, writer, optim = optim, loss_func = loss_func, train_dataloader=train_dataloader, model = model,
+    avg_loss = ep.train_one_epoch(epoch_number, writer, optim = optim, loss_func = loss_func, train_dataloader=train_dataloader, model = model,
                                metric_calculator=metric_calculator, metric_calculator_binary=metric_calculator_binary, device = device)
     #print("avg loss in epoch", avg_loss)
 
