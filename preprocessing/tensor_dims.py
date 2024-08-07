@@ -22,8 +22,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_cropped_slices")
-train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_cropped_slices")
+train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/cropped_train_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/cropped_train_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir

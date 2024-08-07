@@ -19,10 +19,10 @@ from image import mri
 #test_img_dir = pathlib.Path(r"")
 #test_label_dir= pathlib.Path(r"")
 
-train_img_dir = pathlib.Path(r"spider_toy_dset/train_images")
-train_label_dir = pathlib.Path(r"spider_toy_dset/train_labels")
-test_img_dir = pathlib.Path(r"spider_toy_dset/test_images")
-test_label_dir= pathlib.Path(r"spider_toy_dset/test_labels")
+train_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/train_images")
+train_label_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/train_labels")
+test_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_images")
+test_label_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_labels")
 
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
@@ -32,10 +32,10 @@ test_label_dir= pathlib.Path(r"spider_toy_dset/test_labels")
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"spider_toy_dset_slices/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"spider_toy_dset_slices/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"spider_toy_dset_slices/test_label_slices")
+train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_label_slices")
 
 
 #Get lists of the files in the directories 

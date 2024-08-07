@@ -1,11 +1,11 @@
 {
-    "row_max": 448,
-    "col_max": 176,
-    "image_tensor_min": -2057.0,
-    "image_tensor_max": 4280.0,
+    "row_max": 432,
+    "col_max": 224,
+    "image_tensor_min": -1714.0,
+    "image_tensor_max": 4157.0,
     "label_tensor_min": 0.0,
-    "label_tensor_max": 207.0,
-    "masks_no": 16,
+    "label_tensor_max": 208.0,
+    "masks_no": 18,
     "masks_array": [
         0.0,
         1.0,
@@ -15,6 +15,7 @@
         5.0,
         6.0,
         7.0,
+        8.0,
         100.0,
         201.0,
         202.0,
@@ -22,6 +23,7 @@
         204.0,
         205.0,
         206.0,
-        207.0
+        207.0,
+        208.0
     ]
 }
