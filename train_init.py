@@ -254,7 +254,7 @@ for epoch in range(epochs):
     
     writer.flush()
     
-    # Track best performance, and save the model's state    
+    #Change path to save model accordingly     
     model_path = 'runs/relativepath_testing/spider_model_{}_{}'.format(timestamp, epoch_number)
     
     torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
