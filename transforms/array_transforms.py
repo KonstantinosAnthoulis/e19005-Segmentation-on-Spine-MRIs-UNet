@@ -49,11 +49,24 @@ def remove_empty_slices(img_a, label_a):
 
 def extract_slices(arr, input_mri_path, target_slice_dir):
 
+    #For every 2D slice in the 3D array
     for idx in range(arr.shape[0]):
-        idx_slice = sitk.GetImageFromArray(arr[idx, :, :])
+        #Get 2D Array
+        idx_arr = arr[idx, : , :]
 
-        print(idx_slice.GetSize())
+        #Vertical and horizontal flips because resampling ode screws things up for some reason
+        idx_arr = np.flipud(idx_arr) 
+        idx_arr = np.fliplr(idx_arr)
 
+        #Get 2D image
+        idx_slice = sitk.GetImageFromArray(idx_arr)
+        
+        #Small debug print to ensure correct dimensions (should be triple digits in both X and Y)
+        
+        if(idx == 0):
+            print("dims of exported slices:", idx_slice.GetSize(), "for" , input_mri_path)
+       
+        #Naming convention + path for new file
         input_path_split = input_mri_path.split(".")
         pre = input_path_split[0] #1_t1
         post = "_" + str(idx) + "." + input_path_split[1] #_0.mha for 1st slice of image 1_t1
@@ -65,59 +78,60 @@ def extract_slices(arr, input_mri_path, target_slice_dir):
 
 #--------------------2D ARRAYS-------------------------------------------------------------------
 #remove all rows columns with just 0s 
+import numpy as np
+
+import numpy as np
+
 def crop_zero(img_a, label_a):
- 
-    row_count = 0
-    col_count = 0
+    # Find the bounding box of the ROI in the label array
+    rows = np.any(label_a, axis=1)
+    cols = np.any(label_a, axis=0)
+    
+    # Check if there are any non-zero values in the label
+    if not np.any(rows) or not np.any(cols):
+        # No non-zero values found, return the original images
+        return img_a, label_a
+    
+    rmin, rmax = np.where(rows)[0][[0, -1]]
+    cmin, cmax = np.where(cols)[0][[0, -1]]
 
-    #counting 0 rows, using this util for now but there is a chance it could find and delete cols/rows of 0 within the region of interest
-    for idx_row in range(label_a.shape[0]): #for rows
-         if  np.any(label_a[idx_row, :]):
-            row_count = row_count + 1
-             
+    # Calculate the dimensions of the ROI
+    roi_height = rmax - rmin + 1
+    roi_width = cmax - cmin + 1
 
-    for idx_col in range(label_a.shape[1]): #for cos
-        if  np.any(label_a[: ,idx_col]):
-            col_count = col_count +1
-                
-
-
-    #print("y max nonzero", y_max_nonzero)
-    #print("x max", x_max_nonzero)
-    #print("y max", y_max_nonzero)
-
-    if (row_count % 16 != 0):
-        out_row = ((row_count+ 15) // 16) * 16
-        #print("row max going in div", row_max_nonzero)
-        #print("row div", row_max_nonzero % 16)
-        
+    # Ensure the dimensions are multiples of 16 for U-Net
+    if roi_height % 16 != 0:
+        out_row = ((roi_height + 15) // 16) * 16
     else:
-        out_row = row_count
+        out_row = roi_height
 
-    if(col_count % 16 != 0): 
-        out_col = ((col_count + 15) // 16) * 16
-        #print("col max going in div", col_max_nonzero)
-        #print("col div", col_max_nonzero % 16)
-    else:  
-        out_col = col_count
-    
-    center_row = label_a.shape[0]//2 - out_row//2
-    center_col = label_a.shape[1]//2 - out_col//2
+    if roi_width % 16 != 0:
+        out_col = ((roi_width + 15) // 16) * 16
+    else:
+        out_col = roi_width
 
-    out_img_a = np.empty([out_row, out_col])
-    out_label_a = np.empty([out_row, out_col]) #return arrays will have x y dims multiple of 16 for unet 
-    
-    #print("out shape", out_img_a.shape)
+    # Calculate the center of the bounding box
+    center_row = (rmin + rmax) // 2
+    center_col = (cmin + cmax) // 2
 
-    out_img_a = img_a[center_row:center_row + out_row, center_col:center_col + out_col]
+    # Calculate the crop start coordinates
+    start_row = max(0, center_row - out_row // 2)
+    start_col = max(0, center_col - out_col // 2)
 
-    out_label_a = label_a[center_row:center_row + out_row, center_col:center_col + out_col]
-    
-    #print(out_label_a.shape)
-    
-    return out_img_a, out_label_a 
+    # Ensure the crop stays within the image boundaries
+    end_row = min(start_row + out_row, img_a.shape[0])
+    end_col = min(start_col + out_col, img_a.shape[1])
+    start_row = end_row - out_row
+    start_col = end_col - out_col
 
-    
+    # Crop the image and label arrays
+    out_img_a = img_a[start_row:end_row, start_col:end_col]
+    out_label_a = label_a[start_row:end_row, start_col:end_col]
+
+    return out_img_a, out_label_a
+
+
+
 
 
 
