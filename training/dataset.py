@@ -20,7 +20,6 @@ device = (
     if torch.backends.mps.is_available()
     else "cpu"
 )
-print(f"Using {device} device")
 
 json_path = "tensor_data/data.json"
 
@@ -69,8 +68,7 @@ class SpiderDataset(Dataset):
 
         #value mapping label tensor 0-19
         label_a = value_map(label_a)
-        print("array label unique", np.unique(label_a))
-
+        
         image_tensor = torch.from_numpy(image_a)
         label_tensor = torch.from_numpy(label_a)
         
@@ -84,8 +82,6 @@ class SpiderDataset(Dataset):
         #normalise image tensor
         image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
         #label_tensor = (label_tensor - label_tensor_min) / (label_tensor_max - label_tensor_min) #INTS HERE DO NOT NORMALISE 
-
-        print(label_tensor.min(), label_tensor.max())
 
         #one hot label, this works only if the range on the label tensors is from 0 to x steps of 1 
         label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes= masks_no) 
@@ -105,18 +101,11 @@ class SpiderDataset(Dataset):
         #remove backround (0) channel in channel dim of label tensor 
         label_tensor = label_tensor[1:, :, :]  
        
-        print("tensor shape after removing first channel 2nd dim", label_tensor.shape)
-
         label_flattened = label_tensor.flatten()
         #print("label tensor unique values", torch.unique(label_flattened))
 
         image_tensor = image_tensor.to(device)
         label_tensor = label_tensor.to(device)
-
-
-        #tensor shapes going in 
-        print(image_tensor.shape)
-        print(label_tensor.shape)
 
         return image_tensor, label_tensor
 
