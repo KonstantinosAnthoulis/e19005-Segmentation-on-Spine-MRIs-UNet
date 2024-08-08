@@ -1,5 +1,9 @@
 #PREPROCESSING 3
 
+#Now that we have our low-resolution 3D images it's time to separate them to train and test splits
+    #Not applying this step to 2D images since the result will be the same plus this is an
+    #easier way to ensure series from the same patient will only be present in either train or test
+
 import SimpleITK as sitk
 import natsort
 import pathlib
@@ -9,13 +13,13 @@ import random
 from sklearn.model_selection import train_test_split
 
 #Full 
-full_image_path = pathlib.Path(r"D:/Spider Slice Directories/voxel spacing bspline full images")
-full_label_path = pathlib.Path(r"D:/Spider Slice Directories/voxel spacing bspline full labels")
+full_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series_lowres")
+full_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series_lowres")
 #Directories to copy to
-train_image_path = pathlib.Path(r"D:/Spider Slice Directories/image_train")
-train_label_path = pathlib.Path(r"D:/Spider Slice Directories/label_train")
-test_image_path = pathlib.Path(r"D:/Spider Slice Directories/image_test")
-test_label_path = pathlib.Path(r"D:/Spider Slice Directories/label_test")
+train_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_train")
+train_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_train")
+test_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_test")
+test_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_test")
 
 full_image_dir_list = os.listdir(full_image_path)
 full_label_dir_list = os.listdir(full_label_path)

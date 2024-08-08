@@ -79,13 +79,10 @@ for idx in range (0,dirlen):
     sitk.WriteImage(label_sitk, labels_series_dir.joinpath(labels_dir_list[idx]))
     
 
-            
-
 print("total SPACE images excluded", space_excl_count)
 print("total t1 images excluded", t1_excl_count)
 print("total t2 images excluded", t2_excl_count)
     
-        
-    
+
         
 
