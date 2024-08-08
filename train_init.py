@@ -53,11 +53,11 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Directories test Work Desktop 
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/cropped_train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/cropped_train_label_slices")
+train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_label_slices")
 
-test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Dummy Dataset/test_label_slices")
+test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_label_slices")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
