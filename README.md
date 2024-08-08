@@ -31,14 +31,15 @@ After executing those 2 steps all should be working: just change the paths in ea
 
 ## Script Order 
 Execute the scripts in this order to recreate training environment on your machine
-
-1) `dataset_split`: split dataset of 3D images 80/20 or ratio of choice <br>
+1) `extract_patient_series`: get all patient series with both t1 and t2 series w/o space images <br>
+2) `dataset_split`: split dataset of 3D images 80/20 or ratio of choice <br>
 splitting the 3D images and not the 2D images ensures series from the same patient are present in either train or test, not both at the same time<Br>
-2) `extract_slices`: take 3D images apply resampling, then extract 2D images to train model on <br>
-3) `crop_slices`: crop images to ROI as feature extraction/dimensionality reduction<br>
-4) `tensor_dims`: comb through the dataset for tensor data (normalisation one-hot encoding etc) adn write data to .json file <br>
-5) `train_init`: initialise training with untrained Unet <br>
-6) `train_cont`: read model and optim states off path to continue training <Br>
+3) `extract_slices`: take 3D images apply resampling, then extract 2D images to train model on <br>
+4) `crop_slices`: crop images to ROI as feature extraction/dimensionality reduction<br>
+5) `augmentation`: augmentation steps here, will fill when created (and/or use augmentation methods of choice) <br>
+6) `tensor_dims`: comb through the dataset for tensor data (normalisation one-hot encoding etc) adn write data to .json file <br>
+7) `train_init`: initialise training with untrained Unet <br>
+8) `train_cont`: read model and optim states off path to continue training <Br>
 
 ## Run Monitoring
 ### Training Locally
