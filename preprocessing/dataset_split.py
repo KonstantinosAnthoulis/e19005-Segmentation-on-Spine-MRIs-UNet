@@ -1,8 +1,4 @@
-#TODO convert notebook to .py script
-#apply to 3d images not 2d images
-
-#copy pasting the notebook to delete original folder 
-#TODO modify (if needed) to work with 3d dataset 
+#PREPROCESSING 3
 
 import SimpleITK as sitk
 import natsort
