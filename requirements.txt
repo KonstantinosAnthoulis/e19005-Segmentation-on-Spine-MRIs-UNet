@@ -5,7 +5,7 @@ SimpleITK
 scikit-learn
 tensorboard 
 #uncomment version you don't want installed, default GPU
-#gpu 
+#gpu, adjust cuda as needed
 torch 
 torchvision 
 #cpu 
