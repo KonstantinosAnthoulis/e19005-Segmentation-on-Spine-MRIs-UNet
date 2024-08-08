@@ -91,7 +91,7 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 1 #setting this to 3 epochs per training session takes about 6-8 hours
+epochs = 1 
 lr = 0.0001 #0.001 too large 
 batchsize = 6 #max on local machine
 loss_func = nn.BCEWithLogitsLoss() 
@@ -255,7 +255,7 @@ for epoch in range(epochs):
     writer.flush()
     
     # Track best performance, and save the model's state    
-    model_path = 'tensorboard_runs/relativepath_testing/spider_model_{}_{}'.format(timestamp, epoch_number)
+    model_path = 'runs/relativepath_testing/spider_model_{}_{}'.format(timestamp, epoch_number)
     
     torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
         
