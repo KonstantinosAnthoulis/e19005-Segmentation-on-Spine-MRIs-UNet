@@ -14,12 +14,12 @@ import numpy as np
 from natsort import natsorted
 
 #Directories with patient series
-images_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series")
-labels_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series")
+images_dir = pathlib.Path(r"D:/Spider Data/images_series")
+labels_dir = pathlib.Path(r"D:/Spider Data/labels_series")
 
 #Directories to write the lower res images to
-images_lowres_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series_lowres")
-labels_lowres_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series_lowres")
+images_lowres_dir = pathlib.Path(r"D:/Spider Data/images_series_lowres")
+labels_lowres_dir = pathlib.Path(r"D:/Spider Data/labels_series_lowres")
 
 #Set max res, adjust as needed
 max_res = 550

@@ -13,13 +13,13 @@ import random
 from sklearn.model_selection import train_test_split
 
 #Full 
-full_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series_lowres")
-full_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series_lowres")
+full_image_path = pathlib.Path(r"D:/Spider Data/images_series_lowres")
+full_label_path = pathlib.Path(r"D:/Spider Data/labels_series_lowres")
 #Directories to copy to
-train_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_train")
-train_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_train")
-test_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_test")
-test_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_test")
+train_image_path = pathlib.Path(r"D:/Spider Data/train_images")
+train_label_path = pathlib.Path(r"D:/Spider Data/train_labels")
+test_image_path = pathlib.Path(r"D:/Spider Data/test_images")
+test_label_path = pathlib.Path(r"D:/Spider Data/test_labels")
 
 full_image_dir_list = os.listdir(full_image_path)
 full_label_dir_list = os.listdir(full_label_path)

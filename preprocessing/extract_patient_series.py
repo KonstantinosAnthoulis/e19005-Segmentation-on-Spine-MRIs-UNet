@@ -15,12 +15,12 @@ import os
 from natsort import natsorted
 
 #Full Dataset Paths 
-images_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images")
-labels_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels")
+images_dir = pathlib.Path(r"D:/Spider Data/images")
+labels_dir = pathlib.Path(r"D:/Spider Data/labels")
 
 #Paths to write the t1-t2 series to
-images_series_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series")
-labels_series_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series")
+images_series_dir = pathlib.Path(r"D:/Spider Data/images_series")
+labels_series_dir = pathlib.Path(r"D:/Spider Data/labels_series")
 
 #Get lists of full dset
 images_dir_list = os.listdir(images_dir)
@@ -45,6 +45,8 @@ dirlen = len(images_dir_list)
 
 for idx in range (0,dirlen):
     
+    print(idx)
+
     #Get image paths in directory
     img_path = images_dir.joinpath(images_dir_list[idx])    
     label_path = labels_dir.joinpath(labels_dir_list[idx]) 
