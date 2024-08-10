@@ -1,7 +1,7 @@
 {
     "row_max": 464,
     "col_max": 368,
-    "image_tensor_min": -2097.0,
+    "image_tensor_min": -2142.0,
     "image_tensor_max": 4385.0,
     "label_tensor_min": 0.0,
     "label_tensor_max": 209.0,

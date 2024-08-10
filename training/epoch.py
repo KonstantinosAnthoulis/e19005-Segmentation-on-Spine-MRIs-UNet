@@ -90,27 +90,23 @@ def train_one_epoch(epoch_index, tb_writer, model, optim, loss_func, train_datal
 
         print("batch" ,i )
         #every 100 batches
-        if i % 100 == 99: 
-            last_loss = running_loss / 100 # loss per batch
-            last_accu = running_accu / 100
-            last_dice = running_dice / 100
-            #last_precision = running_precision / 100
-            #last_recall = running_recall / 100
+        if i % 25 == 24: 
+            last_loss = running_loss / 25
+            last_accu = running_accu / 25
+            last_dice = running_dice / 25
 
-            vert_last_accu = vert_running_accu / 100
-            vert_last_dice = vert_running_dice /100
+            vert_last_accu = vert_running_accu / 25
+            vert_last_dice = vert_running_dice / 25
 
-            sc_last_accu = sc_running_accu / 100
-            sc_last_dice = sc_running_dice / 100
+            sc_last_accu = sc_running_accu / 25
+            sc_last_dice = sc_running_dice / 25
 
-            ivd_last_accu = ivd_running_accu / 100
-            ivd_last_dice = ivd_running_dice / 100
+            ivd_last_accu = ivd_running_accu / 25
+            ivd_last_dice = ivd_running_dice / 25
 
-            #print('  batch {} loss: {}'.format(i + 1, last_loss))
-            
             tb_x = epoch_index * len(train_dataloader) + i + 1
             tb_writer.add_scalar('Loss/train', last_loss, tb_x)
-            
+
             tb_writer.add_scalar('General/accuracy_train', last_accu, tb_x)
             tb_writer.add_scalar('General/dice_train', last_dice, tb_x)
 
@@ -122,7 +118,7 @@ def train_one_epoch(epoch_index, tb_writer, model, optim, loss_func, train_datal
 
             tb_writer.add_scalar('Intervertebral Discs/accuracy_train', ivd_last_accu, tb_x)
             tb_writer.add_scalar('Intervertebral Discs/dice_train', ivd_last_dice, tb_x)
-            
+
             running_loss = 0.
             running_accu = 0.
             running_dice = 0.
@@ -130,13 +126,12 @@ def train_one_epoch(epoch_index, tb_writer, model, optim, loss_func, train_datal
             vert_running_accu = 0.
             vert_running_dice = 0.
 
-            
             sc_running_accu = 0.
             sc_running_dice = 0.
 
-            
             ivd_running_accu = 0.
             ivd_running_dice = 0.
+
 
     #print("loss", loss)
     return last_loss

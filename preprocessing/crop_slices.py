@@ -1,3 +1,5 @@
+#PREPROCESSING 5
+
 #Dependencies 
 import numpy as np 
 from natsort import natsorted
@@ -11,14 +13,14 @@ from image import mri_slice
 #Array transforms for cropping
 from transforms import array_transforms
 
-
 #Uncropped slice directories
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
 
 #Directories to write cropped images to
-train_cropped_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_image_slices")
-train_cropped_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_label_slices")
+train_cropped_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
+train_cropped_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
+
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -43,6 +45,8 @@ if(dirlen_image != dirlen_label):
 dirlen = dirlen_image
 
 for idx in range(0, dirlen):
+    
+    print(idx)
    
     #Get image and corresponding label paths
     img_path = image_path.joinpath(image_dir_list[idx])
@@ -58,6 +62,12 @@ for idx in range(0, dirlen):
     image_a = image.hu_a
     label_a = label.hu_a
 
+    #Some empty slices still manage to make it through
+    #Go over them since they break the code otherwise
+    if np.any(label_a) == False:
+        continue
+    
+    
     #Crop both arrays based on ROI of label 
     image_cropped_a, label_cropped_a = array_transforms.crop_zero(image_a, label_a)
 

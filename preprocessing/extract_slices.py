@@ -1,7 +1,4 @@
-#PREPROCESSING 4 
-
-#Once we've split our dataset we extract the slices to new directories while
-    #removing any slices w/o any label information 
+#PREPROCESSING 4
 
 #Dependencies 
 import SimpleITK as sitk
@@ -24,10 +21,10 @@ from image import mri
 #test_img_dir = pathlib.Path(r"")
 #test_label_dir= pathlib.Path(r"")
 
-train_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_images")
-train_label_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_labels")
-test_img_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/test_images")
-test_label_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/test_labels")
+train_img_dir = pathlib.Path(r"D:/Spider Data/train_images")
+train_label_dir = pathlib.Path(r"D:/Spider Data/train_labels")
+test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
+test_label_dir= pathlib.Path(r"D:/Spider Data/test_labels")
 
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
@@ -37,10 +34,10 @@ test_label_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/test_la
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
 
 
 #Get lists of the files in the directories 
@@ -95,7 +92,7 @@ for idx in range(0, train_dirlen):
 
     #Remove slices with no corresponding mask in label 
     image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
-
+    
     print("arr shape going in after remove empty slices", image_a.shape)
 
     print("---")

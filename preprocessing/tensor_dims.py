@@ -1,3 +1,5 @@
+#PREPROCESSING 6
+
 #Dependencies 
 import numpy as np 
 from natsort import natsorted
@@ -22,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir

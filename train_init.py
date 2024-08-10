@@ -53,11 +53,11 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Directories test Work Desktop 
-train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/train_cropped_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
 
-test_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data Slices/test_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
@@ -91,9 +91,9 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 1 
+epochs = 10
 lr = 0.0001 #0.001 too large 
-batchsize = 6 #max on local machine
+batchsize = 12
 loss_func = nn.BCEWithLogitsLoss() 
 loss_func.to(device)
 optim = torch.optim.Adam(model.parameters(), lr=lr)
@@ -125,7 +125,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 #writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
-writer = SummaryWriter('runs/spider_full_batchsize_{}_lr_{}_trainses_0_{}'.format(batchsize, lr, timestamp))
+writer = SummaryWriter('runs/spider_batchsize_{}_lr_{}_trainses_0_{}'.format(batchsize, lr, timestamp))
 epoch_number = 0 #Intial epoch for training 
 
 
@@ -255,7 +255,7 @@ for epoch in range(epochs):
     writer.flush()
     
     #Change path to save model accordingly     
-    model_path = 'runs/relativepath_testing/spider_model_{}_{}'.format(timestamp, epoch_number)
+    model_path = 'C:/Users/kosta/Desktop/Spider Models Optims/spider_model_{}_{}'.format(timestamp, epoch_number)
     
     torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
         
