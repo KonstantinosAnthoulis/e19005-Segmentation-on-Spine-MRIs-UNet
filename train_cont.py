@@ -88,8 +88,11 @@ model = unet.UNet(in_channels= input_channels,num_classes=output_channels, start
 model.to(device)
 model.to(torch.float32)
 
-#Load model for cont
-checkpoint= torch.load("C:/Users/kosta/Desktop/Spider Models Optims/spider_model_20240809_115944_8")
+#Load model for cont, update to last model/optim state
+
+#NOTE: a simple script to get the file w the highest idx in the directory wouldn't be hard to iterate but for now
+    #just focusing on training the model, maybe work on it further down the line 
+checkpoint= torch.load("C:/Users/kosta/Desktop/Spider Models Optims/spider_model_20240810_153716_12")
 model.load_state_dict(checkpoint['model_dict'])
 model.to(device)
 lr = 0.0001
@@ -98,7 +101,8 @@ optim.load_state_dict(checkpoint['optimizer_dict'])
 
 
 #Training Hyperparameters 
-epochs = 4 #udpate accordingly 
+epochs = 9 #udpate accordingly 
+
 lr = 0.0001 #0.001 too large 
 batchsize = 12 #max on 6gb vram
 loss_func = nn.BCEWithLogitsLoss() 
@@ -133,7 +137,7 @@ from torch.utils.tensorboard import SummaryWriter
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 #writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
 writer = SummaryWriter('runs/spider_batchsize_{}_lr_{}_trainses_1_{}'.format(batchsize, lr, timestamp))
-epoch_number = 9
+epoch_number = 13 #set to no of last epoch completed to have consistent tb plots 
 
 
 best_vloss = 1_000_000.
