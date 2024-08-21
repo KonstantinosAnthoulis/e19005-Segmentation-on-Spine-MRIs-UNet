@@ -15,12 +15,21 @@ import os
 from natsort import natsorted
 
 #Full Dataset Paths 
-images_dir = pathlib.Path(r"D:/Spider Data/images")
-labels_dir = pathlib.Path(r"D:/Spider Data/labels")
+#images_dir = pathlib.Path(r"D:/Spider Data/images")
+#labels_dir = pathlib.Path(r"D:/Spider Data/labels")
+
+#Laptop path, only for running the data pipeline and writing the report while the model is training 
+images_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images")
+labels_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels")
+
 
 #Paths to write the t1-t2 series to
-images_series_dir = pathlib.Path(r"D:/Spider Data/images_series")
-labels_series_dir = pathlib.Path(r"D:/Spider Data/labels_series")
+#images_series_dir = pathlib.Path(r"D:/Spider Data/images_series")
+#labels_series_dir = pathlib.Path(r"D:/Spider Data/labels_series")
+
+#Laptop path
+images_series_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series")
+labels_series_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series")
 
 #Get lists of full dset
 images_dir_list = os.listdir(images_dir)
