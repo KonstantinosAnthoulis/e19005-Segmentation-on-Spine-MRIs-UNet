@@ -13,8 +13,8 @@ import random
 from sklearn.model_selection import train_test_split
 
 #Full 
-full_image_path = pathlib.Path(r"D:/Spider Data/images_series_lowres")
-full_label_path = pathlib.Path(r"D:/Spider Data/labels_series_lowres")
+full_image_path = pathlib.Path(r"D:/Spider Data/images_series")
+full_label_path = pathlib.Path(r"D:/Spider Data/labels_series")
 #Directories to copy to
 train_image_path = pathlib.Path(r"D:/Spider Data/train_images")
 train_label_path = pathlib.Path(r"D:/Spider Data/train_labels")

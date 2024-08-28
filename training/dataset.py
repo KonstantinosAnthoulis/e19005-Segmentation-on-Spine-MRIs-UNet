@@ -47,63 +47,29 @@ class SpiderDataset(Dataset):
         self.transform = transform
         self.target_transform = target_transform
 
+        # List tensor files
+        self.label_dir_list = natsorted(os.listdir(self.labels_dir))
+        self.image_dir_list = natsorted(os.listdir(self.img_dir))
+
     def __len__(self):
-        return len(os.listdir(self.labels_dir))
+        return len(self.label_dir_list)
 
     def __getitem__(self, idx):
-        label_dir_list = os.listdir(self.labels_dir)
-        image_dir_list = os.listdir(self.img_dir)
+        # Get the paths for the image and label tensors
+        img_path = os.path.join(self.img_dir, self.image_dir_list[idx])
+        label_path = os.path.join(self.labels_dir, self.label_dir_list[idx])
 
-        image_dir_list = natsorted(image_dir_list)
-        label_dir_list = natsorted(label_dir_list)
-
-        img_path = self.img_dir.joinpath(image_dir_list[idx])
-        label_path = self.labels_dir.joinpath(label_dir_list[idx])
-
-        image = mri_slice.Mri_Slice(img_path)
-        label = mri_slice.Mri_Slice(label_path)
-
-        image_a = image.hu_a
-        label_a = label.hu_a
-
-        #value mapping label tensor 0-19
-        label_a = value_map(label_a)
+        # Load tensors
+        image_tensor = torch.load(img_path)
+        label_tensor = torch.load(label_path)
         
-        image_tensor = torch.from_numpy(image_a)
-        label_tensor = torch.from_numpy(label_a)
-        
-        image_tensor = image_tensor.to(torch.float32)
-        label_tensor = label_tensor.to(torch.float32) #techincally these are ints not floats 
+        # Apply any transformations if needed
+        if self.transform:
+            image_tensor = self.transform(image_tensor)
+        if self.target_transform:
+            label_tensor = self.target_transform(label_tensor)
 
-        #pad to max resolution of slice in dset 
-        image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
-        label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max]) #torch.functional.pad takes care of cropping, no need to call array_transforms.crop_zero()
-
-        #normalise image tensor
-        image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
-        #label_tensor = (label_tensor - label_tensor_min) / (label_tensor_max - label_tensor_min) #INTS HERE DO NOT NORMALISE 
-
-        #one hot label, this works only if the range on the label tensors is from 0 to x steps of 1 
-        label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes= masks_no) 
-
-        label_tensor = label_tensor.float()
-        #print("tensor dims", image_tensor.shape)
-        #print("label tensor min clamp",torch.min(label_tensor))
-        #print("label tensor max clamp", torch.max(label_tensor))
-
-        image_tensor = image_tensor.unsqueeze(0)
-        #label_tensor = label_tensor.unsqueeze(0) 
-        
-        #print("label before permute shape", label_tensor.shape)
-        #permute axes label tensor
-        label_tensor = torch.permute(label_tensor, (2, 0, 1))
-
-        #remove backround (0) channel in channel dim of label tensor 
-        label_tensor = label_tensor[1:, :, :]  
-       
-        label_flattened = label_tensor.flatten()
-        #print("label tensor unique values", torch.unique(label_flattened))
-
+        # Ensure tensors are on the correct device
         image_tensor = image_tensor.to(device)
         label_tensor = label_tensor.to(device)
 
