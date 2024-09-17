@@ -14,13 +14,20 @@ from image import mri_slice
 from transforms import array_transforms
 
 #Uncropped slice directories
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
+#train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
+#train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
+
+#laptop
+train_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_label_slices")
 
 #Directories to write cropped images to
-train_cropped_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
-train_cropped_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
+#train_cropped_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
+#train_cropped_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
 
+#laptop
+train_cropped_img_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_cropped_image_slices")
+train_cropped_label_slice_dir = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_cropped_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
