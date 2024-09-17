@@ -1,4 +1,4 @@
-#Preprocessing extra
+#Preprocessing 7
 
 #Due to large overhead with SimpleITK reading the images, converting the sitk images to np arrays, and then the arrays to tensors takes up a lot of overhead and
     #linearly increases epoch time as batch size increases
@@ -34,7 +34,7 @@ device = (
 
 start_time = time.time()
 
-json_path = "tensor_data/data.json"
+json_path = "tensor_data/uncropped_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -53,13 +53,13 @@ masks_array = data["masks_array"]
 value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
 
 #Paths 
-train_images = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
-train_labels = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
+train_images = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
+train_labels = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
 test_images = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
 test_labels = pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
 
-train_image_tensors = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_tensors")
-train_label_tensors = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_tensors")
+train_image_tensors = pathlib.Path(r"D:/Spider Data Slices/train_image_tensors")
+train_label_tensors = pathlib.Path(r"D:/Spider Data Slices/train_label_tensors")
 test_image_tensors = pathlib.Path(r"D:/Spider Data Slices/test_image_tensors")
 test_label_tensors =  pathlib.Path(r"D:/Spider Data Slices/test_label_tensors")
 

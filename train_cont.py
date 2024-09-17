@@ -5,6 +5,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 import json 
+import re 
+import sys
 
 import SimpleITK as sitk
 reader = sitk.ImageFileReader()
@@ -34,7 +36,7 @@ device = (
 )
 print(f"Using {device} device")
 
-np.random.seed(46)
+torch.manual_seed(46)
 
 json_path = "tensor_data/data.json"
 
@@ -52,12 +54,12 @@ label_tensor_max = data["label_tensor_max"]
 masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
-#Directories test Work Desktop 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
+#Tensor Directories 
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_tensors")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_tensors")
 
-test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_tensors")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_tensors")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
@@ -84,33 +86,45 @@ output_channels = masks_no - 1 #-1 not to count in backround
 start_filts = 32 #unet filters 
 up_mode = 'upsample' #options are either 'upsample' for NN upsampling or 'transpose' for transpose conv
 depth = 5
+lr = 0.0001
 
 model = unet.UNet(in_channels= input_channels,num_classes=output_channels, depth=depth,  start_filts=start_filts, up_mode=up_mode) 
 model.to(device)
 model.to(torch.float32)
 
+
 #Load model for cont, update to last model/optim state
 
 #NOTE: a simple script to get the file w the highest idx in the directory wouldn't be hard to iterate but for now
     #just focusing on training the model, maybe work on it further down the line 
-checkpoint= torch.load("C:/Users/kosta/Desktop/Spider Models Optims/spider_reluadamw_20240826_100824_11")
+
+#last epoch trained path
+path = "C:/Users/kosta/Desktop/Spider Optims Final/spider_6"
+
+checkpoint= torch.load(path)
+print(checkpoint.keys())
+optim = torch.optim.Adam(model.parameters(), lr=lr)
+
+def extract_number_from_path(path):
+    match = re.search(r'(\d+)$', path)
+    return int(match.group(1)) if match else None
+
+epoch_no = extract_number_from_path(path) + 1 #number for plotting in tb
+
 model.load_state_dict(checkpoint['model_dict'])
-model.to(device)
-lr = 0.0001
-optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1) #testing adamW adam was overfitting
+
 optim.load_state_dict(checkpoint['optimizer_dict'])
 
+model.to(device)
+
+#optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1) 
 
 #Training Hyperparameters 
-epochs = 7 #udpate accordingly 
+epochs = 15 #udpate accordingly 
 
-lr = 0.0001  
 batchsize = 6
 loss_func = nn.BCEWithLogitsLoss() 
 loss_func.to(device)
-optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1) #testing adamW adam was overfitting
-
-#optim = torch.optim.Adam(model.parameters(), lr=lr)
 
 print(epochs)
 print(lr)
@@ -137,10 +151,10 @@ metric_calculator_binary = metric.BinaryMetrics(activation='sigmoid') #for calcu
 from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+timestamp = datetime.now().strftime('%Y%m%d_%H')
 #writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
-writer = SummaryWriter('runs/spider_depth_{}_startfilts_{}_relu_AdamW_0.1_trainses_2_{}'.format( depth, start_filts, timestamp))
-epoch_number = 12 #set to no of last epoch completed to have consistent tb plots 
+writer = SummaryWriter('runs/spider_1_{}'.format(timestamp))
+epoch_number = epoch_no #set to no of last epoch completed to have consistent tb plots 
 
 
 best_vloss = 1_000_000.
@@ -337,7 +351,7 @@ for epoch in range(epochs):
     writer.flush()
     
     #Change path to save model accordingly     
-    model_path = 'C:/Users/kosta/Desktop/Spider Models Optims/spider_reluadamw_{}_{}'.format(timestamp, epoch_number)
+    model_path = 'C:/Users/kosta/Desktop/Spider Optims Final/spider_{}'.format(epoch_number)
 
     torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
         

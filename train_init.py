@@ -34,9 +34,9 @@ device = (
 )
 print(f"Using {device} device")
 
-np.random.seed(46)
+torch.manual_seed(46)
 
-json_path = "tensor_data/data.json"
+json_path = "tensor_data/uncropped_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -53,8 +53,8 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Tensor Directories 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_tensors")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_tensors")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_tensors")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_tensors")
 
 test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_tensors")
 test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_tensors")
@@ -96,9 +96,9 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 1
+epochs = 15
 
-lr = 0.0001 
+lr = 0.0001
 batchsize = 6
 loss_func = nn.BCEWithLogitsLoss() 
 loss_func.to(device)
@@ -133,7 +133,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 timestamp = datetime.now().strftime('%Y%m%d_%H')
 #writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
-writer = SummaryWriter('runs/spider_batchsize_{}_Adam_{}'.format( batchsize, timestamp))
+writer = SummaryWriter('runs/spider_uncropped_0_{}'.format(timestamp))
 epoch_number = 0 #Intial epoch for training 
 
 
@@ -290,46 +290,46 @@ for epoch in range(epochs):
     # Log the running loss averaged per batch
     # for both training and validation
     
-    writer.add_scalars('Loss/train vs validation',
-                    { 'Training' : avg_loss, 'Validation' : avg_vloss},
+    writer.add_scalars('Loss/validation',
+                    { 'Validation' : avg_vloss},
                     epoch_number + 1)
     
-    writer.add_scalars('General/valid_accuracy',
+    writer.add_scalars('General/accuracy_valid',
                     {'Validation': avg_vaccu},
                     epoch_number + 1)
 
-    writer.add_scalars('General/vaild_dice',
+    writer.add_scalars('General/dice_valid',
                     {'Validation': avg_vdice},
                     epoch_number + 1)
     #vert
-    writer.add_scalars('Vertebrae/valid_accuracy',
+    writer.add_scalars('Vertebrae/accuracy_valid',
                     {'Validation': vert_avg_vaccu},
                     epoch_number + 1)
 
-    writer.add_scalars('Vertebrae/valid_dice',
+    writer.add_scalars('Vertebrae/dice_valid',
                     {'Validation': vert_avg_vdice},
                     epoch_number + 1)
     #spinal canal
-    writer.add_scalars('Spinal Canal/valid_accuracy',
+    writer.add_scalars('Spinal Canal/accuracy_valid',
                     {'Validation': sc_avg_vaccu},
                     epoch_number + 1)
 
-    writer.add_scalars('Spinal Canal/valid_dice',
+    writer.add_scalars('Spinal Canal/dice_valid',
                     {'Validation': sc_avg_vdice},
                     epoch_number + 1)
     #ivd
-    writer.add_scalars('Intervertebral Discs/valid_accuracy',
+    writer.add_scalars('Intervertebral Discs/accuracy_valid',
                     {'Validation': ivd_avg_vaccu},
                     epoch_number + 1)
 
-    writer.add_scalars('Intervertebral Discs/valid_dice',
+    writer.add_scalars('Intervertebral Discs/dice_valid',
                     {'Validation': ivd_avg_vdice},
                     epoch_number + 1)
     
     writer.flush()
     
     #Change path to save model accordingly     
-    model_path = 'C:/Users/kosta/Desktop/Spider Models Optims/spider_{}'.format(epoch_number)
+    model_path = 'C:/Users/kosta/Desktop/Spider Optims Final/spider_uncropped_{}'.format(epoch_number)
     
     torch.save({'model_dict': model.state_dict(), 'optimizer_dict': optim.state_dict()}, model_path)
         

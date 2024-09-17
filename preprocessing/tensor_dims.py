@@ -24,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_cropped_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -164,7 +164,7 @@ data = {key: convert_to_native_types(value) for key, value in data.items()}
 
 # Set the path for the JSON file
 
-file_path = "tensor_data/data.json"
+file_path = "tensor_data/uncropped_data.json"
 
 # Save the dictionary to a JSON file
 with open(file_path, "w") as json_file:
