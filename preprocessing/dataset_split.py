@@ -12,12 +12,6 @@ import shutil
 import random
 from sklearn.model_selection import train_test_split
 
-#Full 
-#full_image_path = pathlib.Path(r"D:/Spider Data/images_series_lowres")
-#full_label_path = pathlib.Path(r"D:/Spider Data/labels_series_lowres")
-
-
-#Laptop
 full_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series")
 full_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series")
 #Directories to copy to

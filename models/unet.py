@@ -58,11 +58,11 @@ class DownConv(nn.Module):
         self.conv2 = conv3x3(self.out_channels, self.out_channels)
 
         if self.pooling:
-            self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+            self.pool = nn.AvgPool2d(kernel_size=2, stride=2)
 
     def forward(self, x):
-        x = F.leaky_relu(self.conv1(x))
-        x = F.leaky_relu(self.conv2(x))
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
         before_pool = x
         if self.pooling:
             x = self.pool(x)
@@ -106,8 +106,8 @@ class UpConv(nn.Module):
             x = torch.cat((from_up, from_down), 1)
         else:
             x = from_up + from_down
-        x = F.leaky_relu(self.conv1(x))
-        x = F.leaky_relu(self.conv2(x))
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
         return x
 
 
