@@ -1,4 +1,4 @@
-#Preprocessing 7
+#PREPROCESSING 7
 
 #Due to large overhead with SimpleITK reading the images, converting the sitk images to np arrays, and then the arrays to tensors takes up a lot of overhead and
     #linearly increases epoch time as batch size increases
