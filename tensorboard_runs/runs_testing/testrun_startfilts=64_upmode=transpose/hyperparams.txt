@@ -1,6 +1,0 @@
-epochs=25
-lr=0.001
-batchsize=8
-loss=BCEWithLogits
-startfilts=64_
-upmode=transpose
