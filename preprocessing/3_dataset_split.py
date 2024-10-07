@@ -12,8 +12,8 @@ import shutil
 import random
 from sklearn.model_selection import train_test_split
 
-full_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/images_series")
-full_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/labels_series")
+full_image_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/images_series")
+full_label_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/labels_series")
 #Directories to copy to
 #train_image_path = pathlib.Path(r"D:/Spider Data/train_images")
 #train_label_path = pathlib.Path(r"D:/Spider Data/train_labels")
@@ -21,10 +21,10 @@ full_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/label
 #test_label_path = pathlib.Path(r"D:/Spider Data/test_labels")
 
 #laptop
-train_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_images")
-train_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/train_labels")
-test_image_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/test_images")
-test_label_path = pathlib.Path(r"C:/Users/Konstantinos/Desktop/Spider Data/test_labels")
+train_image_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_images")
+train_label_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_labels")
+test_image_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_images")
+test_label_path = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_labels")
 
 
 full_image_dir_list = os.listdir(full_image_path)
@@ -51,6 +51,7 @@ train_patient_ids, valid_patient_ids = train_test_split(unique_patient_ids, test
 # Copy images and masks to train or test directories
 for filename in image_files:
     patient_id = get_patient_id(filename)
+    print(patient_id)
     is_train = patient_id in train_patient_ids
     source_image_path = os.path.join(full_image_path, filename)
     source_mask_path = os.path.join(full_label_path, filename)  # Assuming mask filenames are same as image filenames
