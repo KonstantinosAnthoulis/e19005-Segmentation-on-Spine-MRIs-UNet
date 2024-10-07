@@ -19,9 +19,9 @@ keras
 #Torch
 #uncomment version you don't want installed, default GPU
 #gpu, adjust cuda as needed
-#torch 
-#torchvision 
+torch 
+torchvision 
 #cpu 
 --find-links https://download.pytorch.org/whl/torch_stable.html
-torch==2.3.0+cpu
-torchvision==0.18.0+cpu
+#torch==2.3.0+cpu
+#torchvision==0.18.0+cpu

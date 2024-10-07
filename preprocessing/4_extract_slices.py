@@ -27,10 +27,10 @@ from image import mri
 #test_label_dir= pathlib.Path(r"D:/Spider Data/test_labels")
 
 #laptop
-train_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_images")
-train_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_labels")
-test_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_images")
-test_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_labels")
+train_img_dir = pathlib.Path(r"D:/Spider Data/train_images")
+train_label_dir = pathlib.Path(r"D:/Spider Data/train_labels")
+test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
+test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
@@ -46,10 +46,10 @@ test_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_labels")
 #test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
 
 #laptop
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_image_slices")
-test_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
+test_label_slice_dir = pathlib.Path(r"D:/Spider Data/test_label_slices")
 
 
 #Get lists of the files in the directories 
@@ -99,15 +99,12 @@ for idx in range(0, train_dirlen):
     #Copy
     image_a = image.hu_a
     label_a = label.hu_a
-    print("---")
-    print("arr shape going in extract pre mods", image_a.shape)
-
+    print("train:", idx)
+    
     #Remove slices with no corresponding mask in label 
     image_a, label_a = array_transforms.remove_empty_slices(image_a, label_a)
     
-    print("arr shape going in after remove empty slices", image_a.shape)
-
-    print("---")
+    
 
     #Extract slices after processing to corresponding directories 
     array_transforms.extract_slices(image_a, image_train_dir_list[idx], train_img_slice_dir) 
@@ -120,12 +117,13 @@ for idx in range(0, test_dirlen):
     label_path = test_label_dir.joinpath(label_test_dir_list[idx]) #first part before joinpath is pathlib.Path, second part is the directory of the file 
 
     #Get 3D array after pre-processing
-    image = mri.Mri(img_path, is_label= False, is_train_set= False)
-    label = mri.Mri(label_path, is_label= True, is_train_set= False) 
+    image = mri.Mri(img_path, is_label= False, is_train_set= True)
+    label = mri.Mri(label_path, is_label= True, is_train_set= True)  #NOTE going to end up resampling ALL images to common voxel spacing to get more data 
 
     #Copy
     image_a = image.hu_a
     label_a = label.hu_a
+    print("test", idx)
 
     #Extract slices after processing to corresponding directories 
     array_transforms.extract_slices(image_a, image_test_dir_list[idx], test_img_slice_dir) 
