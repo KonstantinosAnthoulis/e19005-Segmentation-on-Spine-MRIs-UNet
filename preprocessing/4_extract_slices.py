@@ -45,7 +45,6 @@ test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 #test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
 #test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
 
-#laptop
 train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
 train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
 test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
