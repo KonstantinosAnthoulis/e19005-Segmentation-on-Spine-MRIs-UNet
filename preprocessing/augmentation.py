@@ -15,12 +15,13 @@ import albumentations as A
 from natsort import natsorted
 import matplotlib.pyplot as plt
 
+
 #Training Data Paths, only applying augmentation on training data 
 train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
 train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
 
 #test dir to write in 
-noise_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/noise_test")
+noise_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_augmented_slices")
 
 #Get lists of the files in the directories 
 image_train_dir_list = os.listdir(train_img_slice_dir) 
@@ -39,8 +40,11 @@ if (train_len != test_len):
 
 dirlen = train_len
 
+#Set no of augmented images to generate per input image
+augmented_no = 3
+
 gaussian_noise_transform = A.Compose([
-    A.GaussNoise(var_limit=(0.001, 0.01), mean = 0, p=1), #Gaussian Noise  
+    A.GaussNoise(var_limit=(0.001, 0.02), mean = 0, p=1), #Gaussian Noise  
     A.ElasticTransform(alpha=20, sigma=4, p=1) #Random Elastic Deformation 
 ])
 
@@ -52,54 +56,71 @@ for idx in range(0, dirlen):
     image_sitk = sitk.ReadImage(image_path)
     label_sitk = sitk.ReadImage(label_path)
 
+    print(image_train_dir_list[idx])
+
     image_np = sitk.GetArrayFromImage(image_sitk).astype(np.float32)
-    label_np = sitk.GetArrayFromImage(label_sitk).astype(np.int16) #explicitly setting float32 for albumentations to work
+    #label_np = sitk.GetArrayFromImage(label_sitk).astype(np.int16) #explicitly setting float32 for albumentations to work
 
-    #try normalising input image before feeding it to gauss 
-    image_min = np.min(image_np)
-    image_max = np.max(image_np)
+    for aug_idx in range(augmented_no):
 
-    image_normalised_np = (image_np - image_min) / (image_max - image_min)
+        #try normalising input image before feeding it to gauss 
+        image_min = np.min(image_np)
+        image_max = np.max(image_np)
+
+        image_normalised_np = (image_np - image_min) / (image_max - image_min)
 
 
-    #augment
-    augmented = gaussian_noise_transform(image = image_normalised_np)
-    image_augmented_np = augmented["image"]
+        #augment
+        augmented = gaussian_noise_transform(image = image_normalised_np)
+        image_augmented_np = augmented["image"]
 
-    if image_augmented_np.shape[-1] == 1:
-        image_augmented_np = np.squeeze(image_augmented_np, axis=-1)
-        image_np = np.squeeze(image_np, axis=-1)
+        if image_augmented_np.shape[-1] == 1:
+            image_augmented_np = np.squeeze(image_augmented_np, axis=-1)
+            image_np = np.squeeze(image_np, axis=-1)
 
-    #revert normalisation 
-    image_augmented_np = np.clip(image_augmented_np, 0 ,1)
+        #revert normalisation 
+        image_augmented_np = np.clip(image_augmented_np, 0 ,1)
 
-    image_augmented_np = image_augmented_np * (image_max - image_min) + image_min 
-    
-    #Plotting code for checking if the augmentation is applied correctly
-    #Please don't uncomment this and run the loop you'll flood with matplotlib plots 
-    
-    # Plot the original and the augmented image side by side
-    plt.figure(figsize=(10, 5))
+        image_augmented_np = image_augmented_np * (image_max - image_min) + image_min 
+        
+        #Plotting code for checking if the augmentation is applied correctly
+        #Please don't uncomment this and run the loop you'll flood with matplotlib plots 
+        """
+        # Plot the original and the augmented image side by side
+        plt.figure(figsize=(10, 5))
 
-    # Plot original image
-    plt.subplot(1, 2, 1)
-    plt.imshow(image_np, cmap='gray')
-    plt.title("Original Image")
-    plt.axis("off")
+        # Plot original image
+        plt.subplot(1, 2, 1)
+        plt.imshow(image_np, cmap='gray')
+        plt.title("Original Image")
+        plt.axis("off")
 
-    # Plot image with Gaussian noise
-    plt.subplot(1, 2, 2)
-    plt.imshow(image_augmented_np, cmap='gray')
-    plt.title("Image with Gaussian Noise")
-    plt.axis("off")
+        # Plot image with Gaussian noise
+        plt.subplot(1, 2, 2)
+        plt.imshow(image_augmented_np, cmap='gray')
+        plt.title("Image with Gaussian Noise")
+        plt.axis("off")
 
-    # Show the plots
-    plt.tight_layout()
-    plt.show()
-    
+        # Show the plots
+        plt.tight_layout()
+        plt.show()
+        """
 
-    image_augmented_sitk = sitk.GetImageFromArray(image_augmented_np)
+        image_augmented_sitk = sitk.GetImageFromArray(image_augmented_np)
 
-    break
+        input_path_split = image_train_dir_list[idx].split(".")
+        pre = input_path_split[0]  # '1_t1_0'
+        post = input_path_split[1]  # '.mha'
+
+        pre = pre + "_" + str(aug_idx)
+
+        print(pre)
+
+        image_augmented_filename = pre + "." + post 
+
+        image_augmented_path = noise_dir.joinpath(image_augmented_filename)
+
+        sitk.WriteImage(image_augmented_sitk, image_augmented_path)
+
 
 

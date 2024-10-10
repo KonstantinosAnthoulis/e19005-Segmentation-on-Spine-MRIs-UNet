@@ -24,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
+train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_augmented_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -46,59 +46,59 @@ dirlen_label = len(os.listdir(label_path))
 
 print("train images count", dirlen_image)
 
+#not applicable anymore since multiple slices belong to the same ground truth label 
+"""
 if(dirlen_image != dirlen_label):
   print("Error: image directory has", dirlen_image, "images not equal to label directory", dirlen_label, "images")
   sys.exit()
-  
+ 
 
 #After check pass the value to a single var since they're both the same value 
 dirlen = dirlen_image
+ """
+ 
+ #IMAGES LOOP
 
-#TODO
-#images are already cropped so just go through the dset to find
-#max image dims (row, col)
-#min and max train_images pixel values for tensor normalisation 
-
-for idx in range(0, dirlen):
+for idx in range(0, dirlen_image):
 
   print("idx", idx)
   #Get image and corresponding label paths
   img_path = image_path.joinpath(image_dir_list[idx])
-  lbl_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
+  #lbl_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
  
   #Read image and label
   image = mri_slice.Mri_Slice(img_path)
-  label = mri_slice.Mri_Slice(lbl_path)
+  #label = mri_slice.Mri_Slice(lbl_path)
 
   #Get arrays
   image_a = image.hu_a
-  label_a = label.hu_a
+  #label_a = label.hu_a
 
   #Comb through the dataset to find max ROI dimensions as well as min/max image values for tensor normalisation later 
   if(idx ==0):
     
     image_tensor_min = np.min(image_a)
-    image_tensor_max = np.max(label_a)
-    label_tensor_min = np.min(label_a)
-    label_tensor_max = np.max(label_a)
+    image_tensor_max = np.max(image_a)
+    #label_tensor_min = np.min(label_a)
+    #label_tensor_max = np.max(label_a)
     
-    unique_masks_a = np.unique(label_a)
+    #unique_masks_a = np.unique(label_a)
   else:
     
     if(np.min(image_a) < image_tensor_min):
       image_tensor_min = np.min(image_a)
       image_tensor_min_dir = img_path
-    if(np.min(label_a) < label_tensor_min):
-      label_tensor_min = np.min(label_a)
+    #if(np.min(label_a) < label_tensor_min):
+    #  label_tensor_min = np.min(label_a)
     if(np.max(image_a) > image_tensor_max):
       image_tensor_max = np.max(image_a)
-    if(np.max(label_a) > label_tensor_max):
-      label_tensor_max = np.max(label_a)
+   # if(np.max(label_a) > label_tensor_max):
+    #  label_tensor_max = np.max(label_a)
     
   #Find amount of unique masks for one-hot encoding 
-    current_masks_a = np.unique(label_a)
-    if(len(current_masks_a) > len(unique_masks_a)):
-      unique_masks_a = current_masks_a
+   # current_masks_a = np.unique(label_a)
+   # if(len(current_masks_a) > len(unique_masks_a)):
+     # unique_masks_a = current_masks_a
   
   #Add values to lists
   row_list.append(image_a.shape[0]) 
@@ -129,6 +129,17 @@ print("masks array", unique_masks_a)
 #These are the mask values from the Spider GC Dataset, I'm just leaving this here explicitly because some images don't contain mask 209 
   #Comment the code out for different dataset/depending on your application
 #unique_masks_a = np.array([0. ,   1. ,  2.   ,3.  , 4. ,  5. ,  6. ,  7. ,  8.,   9. ,100. ,201. ,202. ,203. ,204., 205. ,206. ,207. ,208. ,209.])
+
+print("loop done")
+
+print(   "row_max", max(row_list), "\n",
+    "col_max", max(col_list), "\n",
+    "image_tensor_min", image_tensor_min, "\n",
+    "image_tensor_max", image_tensor_max, "\n")
+
+
+
+sys.exit()
 
 #Save to .json for easy access when training the model 
 data = {
