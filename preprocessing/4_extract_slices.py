@@ -26,10 +26,10 @@ from image import mri
 #test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
 #test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 
-train_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_images")
-train_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_labels")
-test_img_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_images")
-test_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_labels")
+train_img_dir = pathlib.Path(r"D:/Spider Data/train_images")
+train_label_dir = pathlib.Path(r"D:/Spider Data/train_labels")
+test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
+test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
@@ -39,15 +39,15 @@ test_label_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_labels")
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
-#train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
-#train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
-#test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
-#test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data/test_label_slices")
 
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_image_slices")
-test_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_label_slices")
+#train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
+#train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
+#test_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_image_slices")
+#test_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_label_slices")
 
 
 #Get lists of the files in the directories 

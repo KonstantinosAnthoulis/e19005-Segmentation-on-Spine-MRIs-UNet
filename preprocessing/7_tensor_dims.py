@@ -24,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_augmented_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -63,12 +63,12 @@ for idx in range(0, dirlen_image):
 
   print("idx", idx)
   #Get image and corresponding label paths
-  img_path = image_path.joinpath(image_dir_list[idx])
-  #lbl_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
+  image_file_path = image_path.joinpath(image_dir_list[idx])
+  #label_path = label_path.joinpath(label_dir_list[idx])#first part before joinpath is pathlib.Path, second part is the directory of the file 
  
   #Read image and label
-  image = mri_slice.Mri_Slice(img_path)
-  #label = mri_slice.Mri_Slice(lbl_path)
+  image = mri_slice.Mri_Slice(image_file_path)
+  #label = mri_slice.Mri_Slice(label_path)
 
   #Get arrays
   image_a = image.hu_a
@@ -87,8 +87,8 @@ for idx in range(0, dirlen_image):
     
     if(np.min(image_a) < image_tensor_min):
       image_tensor_min = np.min(image_a)
-      image_tensor_min_dir = img_path
-    #if(np.min(label_a) < label_tensor_min):
+      image_tensor_min_dir = image_file_path
+   # if(np.min(label_a) < label_tensor_min):
     #  label_tensor_min = np.min(label_a)
     if(np.max(image_a) > image_tensor_max):
       image_tensor_max = np.max(image_a)
@@ -96,13 +96,48 @@ for idx in range(0, dirlen_image):
     #  label_tensor_max = np.max(label_a)
     
   #Find amount of unique masks for one-hot encoding 
-   # current_masks_a = np.unique(label_a)
+  #  current_masks_a = np.unique(label_a)
    # if(len(current_masks_a) > len(unique_masks_a)):
-     # unique_masks_a = current_masks_a
+   #   unique_masks_a = current_masks_a
   
   #Add values to lists
   row_list.append(image_a.shape[0]) 
   col_list.append(image_a.shape[1])  
+
+for idx_label in range(0, dirlen_label):
+    print("Processing Label idx:", idx_label)
+    
+    # Get label path
+    label_file_path = label_path.joinpath(label_dir_list[idx_label])
+
+    print("LABEL PATH" , label_file_path)
+
+    
+    # Read label
+    label = mri_slice.Mri_Slice(label_file_path)
+    
+    # Get label array
+    label_a = label.hu_a
+    
+    # Find min and max values for labels
+    if idx_label == 0:
+        # Initialize min/max values for labels
+        label_tensor_min = np.min(label_a)
+        label_tensor_max = np.max(label_a)
+        
+        # Initialize unique masks
+        unique_masks_a = np.unique(label_a)
+    else:
+        # Update min/max if necessary
+        if np.min(label_a) < label_tensor_min:
+            label_tensor_min = np.min(label_a)
+        if np.max(label_a) > label_tensor_max:
+            label_tensor_max = np.max(label_a)
+        
+        # Update unique masks for one-hot encoding if new masks are found
+        current_masks_a = np.unique(label_a)
+        if len(current_masks_a) > len(unique_masks_a):
+            unique_masks_a = current_masks_a
   
 #Get max values from lists
 row_dim_max = max(row_list)
@@ -138,9 +173,6 @@ print(   "row_max", max(row_list), "\n",
     "image_tensor_max", image_tensor_max, "\n")
 
 
-
-sys.exit()
-
 #Save to .json for easy access when training the model 
 data = {
     "row_max": max(row_list),
@@ -175,7 +207,7 @@ data = {key: convert_to_native_types(value) for key, value in data.items()}
 
 # Set the path for the JSON file
 
-file_path = "tensor_data/uncropped_data.json"
+file_path = "tensor_data/augmented_data.json"
 
 # Save the dictionary to a JSON file
 with open(file_path, "w") as json_file:
