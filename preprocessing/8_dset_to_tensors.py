@@ -53,15 +53,15 @@ masks_array = data["masks_array"]
 value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
 
 #Paths 
-train_images = pathlib.Path(r"D:/Spider Data Slices/train_image_slices")
-train_labels = pathlib.Path(r"D:/Spider Data Slices/train_label_slices")
-test_images = pathlib.Path(r"D:/Spider Data Slices/test_image_slices")
-test_labels = pathlib.Path(r"D:/Spider Data Slices/test_label_slices")
+train_images = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
+train_labels = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+test_images = pathlib.Path(r"D:/Spider Data/test_image_slices")
+test_labels = pathlib.Path(r"D:/Spider Data/test_label_slices")
 
-train_image_tensors = pathlib.Path(r"D:/Spider Data Slices/train_image_tensors")
-train_label_tensors = pathlib.Path(r"D:/Spider Data Slices/train_label_tensors")
-test_image_tensors = pathlib.Path(r"D:/Spider Data Slices/test_image_tensors")
-test_label_tensors =  pathlib.Path(r"D:/Spider Data Slices/test_label_tensors")
+train_image_tensors = pathlib.Path(r"D:/Spider Data/train_image_augmented_tensors")
+train_label_tensors = pathlib.Path(r"D:/Spider Data/train_label_augmented_tensors")
+test_image_tensors = pathlib.Path(r"D:/Spider Data/test_image_tensors")
+test_label_tensors =  pathlib.Path(r"D:/Spider Data/test_label_tensors")
 
 train_images_sitk_list = os.listdir(train_images)
 train_labels_sitk_list = os.listdir(train_labels)
@@ -77,63 +77,65 @@ print(len(train_images_sitk_list))
 print(len(test_images_sitk_list))
 
 
-#train set 
+# Loop for processing images
 for idx in range(0, len(train_images_sitk_list)):
-
     img_path = train_images.joinpath(train_images_sitk_list[idx])
-    label_path = train_labels.joinpath(train_labels_sitk_list[idx])
-
     tensor_filename = train_images_sitk_list[idx].split('.')[0]
 
-    print("image", tensor_filename)
+    print("Processing image:", tensor_filename)
 
+    # Load the image and get the image array
     image = mri_slice.Mri_Slice(img_path)
-    label = mri_slice.Mri_Slice(label_path)
-
     image_a = image.hu_a
+
+    # Convert to tensor and process
+    image_tensor = torch.from_numpy(image_a).to(torch.float32)
+
+    # Pad to max resolution of slice in dataset
+    image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
+
+    # Normalize image tensor
+    image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
+
+    # Add a channel dimension
+    image_tensor = image_tensor.unsqueeze(0)
+
+    # Save the processed image tensor
+    image_tensor_path = train_image_tensors.joinpath(f"{tensor_filename}.pt")
+    torch.save(image_tensor, image_tensor_path)
+
+# Loop for processing labels
+for idx in range(0, len(train_labels_sitk_list)):
+    label_path = train_labels.joinpath(train_labels_sitk_list[idx])
+    tensor_filename = train_labels_sitk_list[idx].split('.')[0]
+
+    print("Processing label:", tensor_filename)
+
+    # Load the label and get the label array
+    label = mri_slice.Mri_Slice(label_path)
     label_a = label.hu_a
 
-    #value mapping label tensor 0-19
+    # Map label values
     label_a = value_map(label_a)
-        
-    image_tensor = torch.from_numpy(image_a)
-    label_tensor = torch.from_numpy(label_a)
-        
-    image_tensor = image_tensor.to(torch.float32)
-    label_tensor = label_tensor.to(torch.float32) #techincally these are ints not floats 
 
-    #pad to max resolution of slice in dset 
-    image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
-    label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max]) #torch.functional.pad takes care of cropping, no need to call array_transforms.crop_zero()
+    # Convert to tensor and process
+    label_tensor = torch.from_numpy(label_a).to(torch.float32)  # technically these are ints not floats
 
-    #normalise image tensor
-    image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
-    #label_tensor = (label_tensor - label_tensor_min) / (label_tensor_max - label_tensor_min) #INTS HERE DO NOT NORMALISE 
+    # Pad to max resolution of slice in dataset
+    label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
 
-    #one hot label, this works only if the range on the label tensors is from 0 to x steps of 1 
-    label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes= masks_no) 
+    # One-hot encode the label tensor
+    label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes=masks_no).float()
 
-    label_tensor = label_tensor.float()
-    #print("tensor dims", image_tensor.shape)
-    #print("label tensor min clamp",torch.min(label_tensor))
-    #print("label tensor max clamp", torch.max(label_tensor))
-
-    image_tensor = image_tensor.unsqueeze(0)
-    #label_tensor = label_tensor.unsqueeze(0) 
-        
-    #print("label before permute shape", label_tensor.shape)
-    #permute axes label tensor
+    # Permute axes of the label tensor
     label_tensor = torch.permute(label_tensor, (2, 0, 1))
 
-    #remove backround (0) channel in channel dim of label tensor 
-    label_tensor = label_tensor[1:, :, :]     
+    # Remove the background (0) channel
+    label_tensor = label_tensor[1:, :, :]
 
-    image_tensor_path = train_image_tensors.joinpath(f"{tensor_filename}.pt")
+    # Save the processed label tensor
     label_tensor_path = train_label_tensors.joinpath(f"{tensor_filename}.pt")
-
-    torch.save(image_tensor, image_tensor_path)
     torch.save(label_tensor, label_tensor_path)
-
     
 
 #test set

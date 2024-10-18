@@ -167,12 +167,6 @@ print("masks array", unique_masks_a)
 
 print("loop done")
 
-print(   "row_max", max(row_list), "\n",
-    "col_max", max(col_list), "\n",
-    "image_tensor_min", image_tensor_min, "\n",
-    "image_tensor_max", image_tensor_max, "\n")
-
-
 #Save to .json for easy access when training the model 
 data = {
     "row_max": max(row_list),
