@@ -40,7 +40,7 @@ masks_array = data["masks_array"]
 
 value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
 
-class SpiderDataset(Dataset):
+class SpiderDatasetSITK(Dataset):
     def __init__(self, labels_dir, img_dir, transform=None, target_transform=None):
         self.labels_dir = labels_dir
         self.img_dir = img_dir
