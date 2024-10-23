@@ -38,7 +38,7 @@ label_tensor_max = data["label_tensor_max"]
 masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
-value_map = one_hot.one_hot_encoding(masks_no=masks_no, masks_array=masks_array)
+value_map = one_hot.one_hot_encoding_cp(masks_no=masks_no, masks_array=masks_array)
 
 class SpiderDatasetCupy(Dataset):
     def __init__(self, labels_dir, img_dir, transform=None, target_transform=None):
@@ -63,25 +63,21 @@ class SpiderDatasetCupy(Dataset):
         image_a = cp.load(img_path)  # Load the image as a CuPy array
         label_a = cp.load(label_path)  # Load the label as a CuPy array
 
-        # Normalize image tensor
-        image_a = (image_a - image_tensor_min) / (image_tensor_max - image_tensor_min)
-
-        # Pad to max resolution of slice in dataset using cupy (to ensure it's on the GPU)
-        image_a = cp.pad(
-            image_a, 
-            ((0, row_max - image_a.shape[0]), (0, col_max - image_a.shape[1])), 
-            mode='constant'
-        )
+        # Map label values using the provided function
+        label_a = value_map_cp(label_a)  # Assuming value_map works with numpy arrays
 
         # Convert to tensor and move to the correct device
         image_tensor = torch.as_tensor(image_a, dtype=torch.float32, device=device).unsqueeze(0)
-
-        # Map label values using the provided function
-        label_a = value_map(cp.asnumpy(label_a))  # Assuming value_map works with numpy arrays
-
         # Convert to tensor and process
         label_tensor = torch.as_tensor(label_a, dtype=torch.float32, device=device)
 
+        # Pad to max resolution of slice in dataset
+        image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
+
+        # Normalize image tensor
+        image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
+
+        
         # Pad to max resolution of slice in dataset
         label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
 
