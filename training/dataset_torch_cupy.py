@@ -22,7 +22,7 @@ device = (
     else "cpu"
 )
 
-json_path = "tensor_data/augmented_data.json"
+json_path = "tensor_data/colab_data.json"
 
 # Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -75,16 +75,19 @@ class SpiderDatasetCupy(Dataset):
         image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
         label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
 
+        print(f'Image shape after padding: {image_tensor.shape}')  # Debugging shape after padding
+        print(f'Label shape after padding: {label_tensor.shape}')  # Debugging shape after padding
+
         # Normalize image tensor
         image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
 
         # One-hot encode the label tensor
         label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes=masks_no).float()
-        print(f'Label shape after one-hot: {label_tensor.shape}')  # Debugging shape after one-hot
+        #print(f'Label shape after one-hot: {label_tensor.shape}')  # Debugging shape after one-hot
 
         # Permute axes of the label tensor
         label_tensor = torch.permute(label_tensor, (2, 0, 1))
-        print(f'Label shape after permute: {label_tensor.shape}')  # Debugging shape after permute
+        #print(f'Label shape after permute: {label_tensor.shape}')  # Debugging shape after permute
 
         # Remove the background (0) channel
         label_tensor = label_tensor[1:, :, :]

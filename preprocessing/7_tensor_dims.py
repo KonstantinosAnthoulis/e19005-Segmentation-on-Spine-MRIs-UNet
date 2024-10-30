@@ -24,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/colab_train_image_sitk")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/colab_train_label_sitk")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -169,8 +169,8 @@ print("loop done")
 
 #Save to .json for easy access when training the model 
 data = {
-    "row_max": max(row_list),
-    "col_max": max(col_list),
+    "row_max": row_dim_max,
+    "col_max": col_dim_max,
     "image_tensor_min": image_tensor_min,
     "image_tensor_max": image_tensor_max,
     "label_tensor_min": label_tensor_min,
@@ -201,7 +201,7 @@ data = {key: convert_to_native_types(value) for key, value in data.items()}
 
 # Set the path for the JSON file
 
-file_path = "tensor_data/augmented_data.json"
+file_path = "tensor_data/colab_data.json"
 
 # Save the dictionary to a JSON file
 with open(file_path, "w") as json_file:
