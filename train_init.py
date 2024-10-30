@@ -28,6 +28,7 @@ from training import epoch as ep #not to conlfict with var name in loop
 
 print(torch.cuda.is_available())
 
+
 #Set GPU/Cuda Device to run model on
 device = (
     "cuda"
