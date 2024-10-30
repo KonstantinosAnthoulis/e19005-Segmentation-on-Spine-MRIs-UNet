@@ -19,7 +19,7 @@ import pathlib
 
 from natsort import natsorted
 
-from training import dataset
+from training import dataset_torch_cupy as dataset #change accordingly 
 from training import metric
 from models import unet
 
@@ -59,11 +59,11 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Tensor Directories 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/colab_train_image_numpy")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/colab_train_label_numpy")
 
-test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"D:/Spider Data/test_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data/colab_test_image_numpy")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data/colab_test_label_numpy")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
@@ -78,9 +78,9 @@ label_dir_list = natsorted(label_dir_list)
 
 dirlen = len(image_dir_list)
 
-dummy_train_set = dataset.SpiderDataset(train_label_slice_dir, train_img_slice_dir)
+dummy_train_set = dataset.SpiderDatasetCupy(train_label_slice_dir, train_img_slice_dir)
 
-dummy_test_set = dataset.SpiderDataset(test_label_slice_dir, test_img_slice_dir)
+dummy_test_set = dataset.SpiderDatasetCupy(test_label_slice_dir, test_img_slice_dir)
 
 print("train dataset len",dummy_train_set.__len__())
 print("test dataset len",dummy_test_set.__len__())

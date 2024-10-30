@@ -3,7 +3,7 @@ SimpleITK
 
 #Base
 numpy
-cupy-cuda12x
+cupy-cuda11x
 natsort
 scikit-learn
 scikit-image
@@ -23,6 +23,6 @@ keras
 torch 
 torchvision 
 #cpu 
---find-links https://download.pytorch.org/whl/torch_stable.html
+#--find-links https://download.pytorch.org/whl/torch_stable.html
 #torch==2.3.0+cpu
 #torchvision==0.18.0+cpu
