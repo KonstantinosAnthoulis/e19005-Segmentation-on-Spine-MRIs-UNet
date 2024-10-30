@@ -5,6 +5,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 import json 
+import sys
 
 import SimpleITK as sitk
 reader = sitk.ImageFileReader()
@@ -24,6 +25,9 @@ from models import unet
 
 from training import epoch as ep #not to conlfict with var name in loop
 
+
+print(torch.cuda.is_available())
+
 #Set GPU/Cuda Device to run model on
 device = (
     "cuda"
@@ -34,9 +38,11 @@ device = (
 )
 print(f"Using {device} device")
 
+
+
 torch.manual_seed(46)
 
-json_path = "tensor_data/uncropped_data.json"
+json_path = "tensor_data/augmented_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -53,11 +59,11 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 #Tensor Directories 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_image_tensors")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data Slices/train_label_tensors")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
 
-test_img_slice_dir = pathlib.Path(r"D:/Spider Data Slices/test_image_tensors")
-test_label_slice_dir= pathlib.Path(r"D:/Spider Data Slices/test_label_tensors")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data/test_label_slices")
 
 #Sorting Directories 
 image_path = train_img_slice_dir
@@ -81,8 +87,8 @@ print("test dataset len",dummy_test_set.__len__())
 
 input_channels = 1 #Hounsfield scale
 output_channels = masks_no - 1 #-1 not to count in backround 
-depth = 4
-start_filts = 32 #unet filters 
+depth = 3
+start_filts = 16 #unet filters 
 
 up_mode = 'upsample' #options are either 'upsample' for NN upsampling or 'transpose' for transpose conv
 
@@ -96,10 +102,10 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 15
+epochs = 1
 
 lr = 0.0001
-batchsize = 6
+batchsize = 4
 loss_func = nn.BCEWithLogitsLoss() 
 loss_func.to(device)
 
@@ -133,7 +139,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 timestamp = datetime.now().strftime('%Y%m%d_%H')
 #writer = SummaryWriter('runs/spider_seg_unet_epochs={}_lr={}_batchsize={}_loss=BCEWithLogits_startfilts={}_upmode={}'.format(epochs,lr, batchsize,start_filts,up_mode))
-writer = SummaryWriter('runs/spider_uncropped_0_{}'.format(timestamp))
+writer = SummaryWriter('runs/spider_test_{}'.format(timestamp))
 epoch_number = 0 #Intial epoch for training 
 
 

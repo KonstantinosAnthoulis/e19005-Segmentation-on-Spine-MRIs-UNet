@@ -21,7 +21,7 @@ device = (
     else "cpu"
 )
 
-json_path = "tensor_data/data.json"
+json_path = "tensor_data/augmented_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -51,28 +51,65 @@ class SpiderDataset(Dataset):
         self.label_dir_list = natsorted(os.listdir(self.labels_dir))
         self.image_dir_list = natsorted(os.listdir(self.img_dir))
 
+        # Create a mapping of image files to label files
+        self.image_to_label_map = self._create_image_to_label_map()
+
+    def _create_image_to_label_map(self):
+        # Create a dictionary to map each image to its corresponding label
+        image_to_label = {}
+        
+        # Go through each image and determine its base label
+        for img_name in self.image_dir_list:
+            # Split the image name by underscores
+            parts = img_name.split('_')
+            
+            # Extract the key parts for matching with the label
+            base_label = '_'.join(parts[:3])
+            if len(parts) > 3 and parts[3] == 'f':  # Handle flipped cases
+                base_label += '_f'
+            
+            # Store in the mapping
+            image_to_label[img_name] = base_label
+        
+        return image_to_label
+
     def __len__(self):
-        return len(self.label_dir_list)
+        return len(self.image_dir_list)
 
     def __getitem__(self, idx):
-        # Get the paths for the image and label tensors
-        img_path = os.path.join(self.img_dir, self.image_dir_list[idx])
-        label_path = os.path.join(self.labels_dir, self.label_dir_list[idx])
+        img_name = self.image_dir_list[idx]
+        label_name = self.image_to_label_map.get(img_name)
 
-        # Load tensors
-        image_tensor = torch.load(img_path)
-        label_tensor = torch.load(label_path)
-        
-        # Apply any transformations if needed
+        if not label_name:
+            raise ValueError(f"No corresponding label found for image {img_name}")
+
+        img_path = os.path.join(self.img_dir, img_name)
+        label_path = os.path.join(self.labels_dir, label_name)
+
+        # Check if the image file exists
+        if not os.path.exists(img_path):
+            raise FileNotFoundError(f"Image file not found: {img_path}")
+
+        # Check if the label file exists
+        if not os.path.exists(label_path):
+            raise FileNotFoundError(f"Label file not found: {label_path}")
+
+        # Load images using SimpleITK
+        image_sitk = sitk.ReadImage(img_path)
+        label_sitk = sitk.ReadImage(label_path)
+
+        image_np = sitk.GetArrayFromImage(image_sitk)
+        label_np = sitk.GetArrayFromImage(label_sitk)
+
+        image_tensor = torch.tensor(image_np, dtype=torch.float32)
+        label_tensor = torch.tensor(label_np, dtype=torch.float32)
+
         if self.transform:
             image_tensor = self.transform(image_tensor)
         if self.target_transform:
             label_tensor = self.target_transform(label_tensor)
 
-        # Ensure tensors are on the correct device
-        image_tensor = image_tensor.to(device)
-        label_tensor = label_tensor.to(device)
-
         return image_tensor, label_tensor
+
 
 
