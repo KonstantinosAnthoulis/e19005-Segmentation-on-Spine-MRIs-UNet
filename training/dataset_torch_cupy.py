@@ -38,7 +38,8 @@ label_tensor_max = data["label_tensor_max"]
 masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
-value_map = one_hot.one_hot_encoding_cp(masks_no=masks_no, masks_array=masks_array)
+value_map = one_hot.one_hot_encoding_cp(masks_no = masks_no, masks_array = masks_array)
+assert callable(value_map)
 
 class SpiderDatasetCupy(Dataset):
     def __init__(self, labels_dir, img_dir, transform=None, target_transform=None):
@@ -64,12 +65,13 @@ class SpiderDatasetCupy(Dataset):
         # Check shapes before mapping
         print(f'Original label shape: {label_a.shape}')
 
-        # Map label values
-        label_a = value_map(label_a)  
-        print(f'Mapped label shape: {label_a.shape}')  # Debugging shape after mapping
+           # Apply value mapping to the label
+        label_a = value_map(label_a)  # Assuming one_hot_encoding_cp is defined in one_hot module
+        print(f'Mapped label shape: {label_a.shape}')
 
-        image_tensor = torch.as_tensor(image_a, dtype=torch.float32, device=device).unsqueeze(0)
-        label_tensor = torch.as_tensor(label_a, dtype=torch.float32, device=device)
+        #Converting straight from cupy to torch tensor 
+        image_tensor = torch.as_tensor(image_a.get(), dtype=torch.float32, device=device).unsqueeze(0)
+        label_tensor = torch.as_tensor(label_a.get(), dtype=torch.float32, device=device)
 
         # Pad to max resolution of slice in dataset
         image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])

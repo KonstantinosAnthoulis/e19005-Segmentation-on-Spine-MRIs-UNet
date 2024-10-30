@@ -43,7 +43,7 @@ print(f"Using {device} device")
 
 torch.manual_seed(46)
 
-json_path = "tensor_data/augmented_data.json"
+json_path = "tensor_data/colab_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
