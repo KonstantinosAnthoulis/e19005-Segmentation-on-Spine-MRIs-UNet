@@ -16,25 +16,26 @@ def one_hot_encoding(masks_no, masks_array):
     return value_map
 
 def one_hot_encoding_cp(masks_no, masks_array):
-    # Convert masks_array to a cupy array and ensure it's of integer type
-    masks_array = cp.asarray(masks_array).astype(cp.int32)
+    # Convert masks_array to a cupy array if it's not already
+    masks_array = cp.asarray(masks_array)
     val_range = cp.arange(masks_no)
-
-    # Create a lookup array large enough to hold max value in masks_array
+    
+    # Create a lookup array initialized to NaN with size sufficient to cover max(masks_array)
     max_value = int(cp.max(masks_array)) + 1
     lookup_array = cp.full(max_value, cp.nan)
-
-    # Populate the lookup array
+    
+    # Populate the lookup array with values from val_range
     lookup_array[masks_array] = val_range
 
-    # Define the mapping function
+    # Define the mapping function using the lookup array
     def map_to_specified_set(value):
         if value < max_value:
             return lookup_array[value]
         else:
             return cp.nan
 
-    # Vectorize the function
+    # Vectorize the mapping function
     value_map = cp.vectorize(map_to_specified_set)
     
     return value_map
+
