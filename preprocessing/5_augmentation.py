@@ -15,12 +15,18 @@ from natsort import natsorted
 import matplotlib.pyplot as plt
 
 # Training Data Paths, only applying augmentation on training data 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
+##train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
+#train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
+
+train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
 
 # Test directory to write in 
-train_img_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
-train_label_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+#train_img_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
+#train_label_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+
+train_img_augmented_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_image_slices")
+train_label_augmented_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_label_slices")
 
 # Get lists of the files in the directories 
 image_train_dir_list = os.listdir(train_img_slice_dir) 
