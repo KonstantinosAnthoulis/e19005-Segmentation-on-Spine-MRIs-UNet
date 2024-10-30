@@ -55,49 +55,45 @@ class SpiderDatasetCupy(Dataset):
         return len(self.label_dir_list)
 
     def __getitem__(self, idx):
-        # Get the paths for the image and label tensors
         img_path = os.path.join(self.img_dir, self.image_dir_list[idx])
         label_path = os.path.join(self.labels_dir, self.label_dir_list[idx])
 
-        # Load the image and label using cupy for direct GPU usage
         image_a = cp.load(img_path)  # Load the image as a CuPy array
         label_a = cp.load(label_path)  # Load the label as a CuPy array
 
-        # Map label values using the provided function
-        label_a = value_map(label_a)  # Assuming value_map works with numpy arrays
+        # Check shapes before mapping
+        print(f'Original label shape: {label_a.shape}')
 
-        # Convert to tensor and move to the correct device
+        # Map label values
+        label_a = value_map(label_a)  
+        print(f'Mapped label shape: {label_a.shape}')  # Debugging shape after mapping
+
         image_tensor = torch.as_tensor(image_a, dtype=torch.float32, device=device).unsqueeze(0)
-        # Convert to tensor and process
         label_tensor = torch.as_tensor(label_a, dtype=torch.float32, device=device)
 
         # Pad to max resolution of slice in dataset
         image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
+        label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
 
         # Normalize image tensor
         image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
 
-        
-        # Pad to max resolution of slice in dataset
-        label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
-
         # One-hot encode the label tensor
         label_tensor = nn.functional.one_hot(label_tensor.long(), num_classes=masks_no).float()
+        print(f'Label shape after one-hot: {label_tensor.shape}')  # Debugging shape after one-hot
 
         # Permute axes of the label tensor
         label_tensor = torch.permute(label_tensor, (2, 0, 1))
+        print(f'Label shape after permute: {label_tensor.shape}')  # Debugging shape after permute
 
         # Remove the background (0) channel
-        label_tensor = label_tensor[1:, :, :]        
-
-        # Apply any transformations if needed
-        if self.transform:
-            image_tensor = self.transform(image_tensor)
-        if self.target_transform:
-            label_tensor = self.target_transform(label_tensor)
+        label_tensor = label_tensor[1:, :, :]
 
         # Ensure tensors are on the correct device
         image_tensor = image_tensor.to(device)
         label_tensor = label_tensor.to(device)
+
+        # Ensure image and label sizes match
+        assert image_tensor.shape[1:] == label_tensor.shape[1:], "Image and label sizes do not match!"
 
         return image_tensor, label_tensor
