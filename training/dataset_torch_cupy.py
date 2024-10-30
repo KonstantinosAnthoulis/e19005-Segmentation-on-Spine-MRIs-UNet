@@ -64,7 +64,7 @@ class SpiderDatasetCupy(Dataset):
         label_a = cp.load(label_path)  # Load the label as a CuPy array
 
         # Map label values using the provided function
-        label_a = value_map_cp(label_a)  # Assuming value_map works with numpy arrays
+        label_a = value_map(label_a)  # Assuming value_map works with numpy arrays
 
         # Convert to tensor and move to the correct device
         image_tensor = torch.as_tensor(image_a, dtype=torch.float32, device=device).unsqueeze(0)

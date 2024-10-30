@@ -2,7 +2,8 @@
 SimpleITK
 
 #Base
-numpy 
+numpy
+cupy-cuda12x
 natsort
 scikit-learn
 scikit-image
