@@ -38,7 +38,7 @@ masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
 
-value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
+value_map = one_hot.value_map(masks_no = masks_no, masks_array= masks_array)
 
 class SpiderDatasetTorchTensor(Dataset):
     def __init__(self, labels_dir, img_dir, transform=None, target_transform=None):

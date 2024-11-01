@@ -1,12 +1,9 @@
-#PREPROCESSING 7
+#PREPROCESSING 8
 
-#Due to large overhead with SimpleITK reading the images, converting the sitk images to np arrays, and then the arrays to tensors takes up a lot of overhead and
-    #linearly increases epoch time as batch size increases
+#NOTE BEFORE EXECUTING
 
-#This script is for saving the dataset straight as np tensors to avoid all the conversions and not have to load Sitk during training
-
-#In theory it *should* make training take a lot less time 
-
+#Loading the dataset directly as tensors instead of sitk will improve epoch times BUT the dataset saved as tensors is at least 10x the size on disk of
+#the original dataset, execute at your own discretion 
 
 #Dependencies
 import SimpleITK as sitk
@@ -50,7 +47,7 @@ label_tensor_max = data["label_tensor_max"]
 masks_no = data["masks_no"]
 masks_array = data["masks_array"]
 
-value_map = one_hot.one_hot_encoding(masks_no = masks_no, masks_array= masks_array)
+value_map = one_hot.value_map(masks_no = masks_no, masks_array= masks_array)
 
 #Paths 
 train_images = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
