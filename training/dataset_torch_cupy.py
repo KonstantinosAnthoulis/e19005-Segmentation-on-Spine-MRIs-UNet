@@ -62,13 +62,10 @@ class SpiderDatasetCupy(Dataset):
         image_a = cp.load(img_path)  # Load the image as a CuPy array
         label_a = cp.load(label_path)  # Load the label as a CuPy array
 
-        # Check shapes before mapping
-        print(f'Original label shape: {label_a.shape}')
-
+    
            # Apply value mapping to the label
         label_a = value_map(label_a)  # Assuming one_hot_encoding_cp is defined in one_hot module
-        print(f'Mapped label shape: {label_a.shape}')
-
+    
         #Converting straight from cupy to torch tensor 
         image_tensor = torch.as_tensor(image_a.get(), dtype=torch.float32, device=device).unsqueeze(0)
         label_tensor = torch.as_tensor(label_a.get(), dtype=torch.float32, device=device)
@@ -76,9 +73,6 @@ class SpiderDatasetCupy(Dataset):
         # Pad to max resolution of slice in dataset
         image_tensor = tensor_transforms.pad_to_resolution(image_tensor, [row_max, col_max])
         label_tensor = tensor_transforms.pad_to_resolution(label_tensor, [row_max, col_max])
-
-        print(f'Image shape after padding: {image_tensor.shape}')  # Debugging shape after padding
-        print(f'Label shape after padding: {label_tensor.shape}')  # Debugging shape after padding
 
         # Normalize image tensor
         image_tensor = (image_tensor - image_tensor_min) / (image_tensor_max - image_tensor_min)
@@ -100,5 +94,7 @@ class SpiderDatasetCupy(Dataset):
 
         # Ensure image and label sizes match
         assert image_tensor.shape[1:] == label_tensor.shape[1:], "Image and label sizes do not match!"
+
+        #print("image tensor, label tensor shape", image_tensor.shape, label_tensor.shape)
 
         return image_tensor, label_tensor
