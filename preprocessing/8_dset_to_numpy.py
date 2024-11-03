@@ -54,10 +54,10 @@ value_map = one_hot.value_map(masks_no = masks_no, masks_array= masks_array)
 
 #Paths 
 
-train_images = pathlib.Path(r"D:/Spider Data/colab_train_image_sitk")
-train_labels = pathlib.Path(r"D:/Spider Data/colab_train_label_sitk")
-test_images = pathlib.Path(r"D:/Spider Data/colab_test_image_sitk")
-test_labels = pathlib.Path(r"D:/Spider Data/colab_test_label_sitk")
+train_images = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
+train_labels = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
+test_images = pathlib.Path(r"D:/Spider Data/test_image_slices")
+test_labels = pathlib.Path(r"D:/Spider Data/test_label_slices")
 
 """
 train_images = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_image_slices")
@@ -66,10 +66,10 @@ test_images = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_image_slices
 test_labels = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_label_slices")
 """
 
-train_image_numpy = pathlib.Path(r"D:/Spider Data/colab_train_image_numpy")
-train_label_numpy = pathlib.Path(r"D:/Spider Data/colab_train_label_numpy")
-test_image_numpy = pathlib.Path(r"D:/Spider Data/colab_test_image_numpy")
-test_label_numpy =  pathlib.Path(r"D:/Spider Data/colab_test_label_numpy")
+train_image_numpy = pathlib.Path(r"D:/Spider Data/train_image_numpy")
+train_label_numpy = pathlib.Path(r"D:/Spider Data/train_label_numpy")
+test_image_numpy = pathlib.Path(r"D:/Spider Data/test_image_numpy")
+test_label_numpy =  pathlib.Path(r"D:/Spider Data/test_label_numpy")
 
 """
 train_image_numpy = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_numpy")

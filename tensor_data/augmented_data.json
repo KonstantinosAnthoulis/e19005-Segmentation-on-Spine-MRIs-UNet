@@ -1,6 +1,6 @@
 {
-    "row_max": 567,
-    "col_max": 567,
+    "row_max": 576,
+    "col_max": 576,
     "image_tensor_min": -1000.0,
     "image_tensor_max": 4000.0,
     "label_tensor_min": 0.0,
