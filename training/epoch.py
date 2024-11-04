@@ -88,21 +88,22 @@ def train_one_epoch(epoch_index, tb_writer, model, optim, loss_func, train_datal
         ivd_running_accu += ivd_accu
         ivd_running_dice += ivd_dice
 
-        print("batch" ,i )
-        # every 50 batches
-        if i % 50 == 49: 
-            last_loss = running_loss / 50
-            last_accu = running_accu / 50
-            last_dice = running_dice / 50
+        
+        # every 200 batches 
+        if i % 200 == 199: 
+            print("batch" ,i )
+            last_loss = running_loss / 200
+            last_accu = running_accu / 200
+            last_dice = running_dice / 200
 
-            vert_last_accu = vert_running_accu / 50
-            vert_last_dice = vert_running_dice / 50
+            vert_last_accu = vert_running_accu / 200
+            vert_last_dice = vert_running_dice / 200
 
-            sc_last_accu = sc_running_accu / 50
-            sc_last_dice = sc_running_dice / 50
+            sc_last_accu = sc_running_accu / 200
+            sc_last_dice = sc_running_dice / 200
 
-            ivd_last_accu = ivd_running_accu / 50
-            ivd_last_dice = ivd_running_dice / 50
+            ivd_last_accu = ivd_running_accu / 200
+            ivd_last_dice = ivd_running_dice / 200
 
             tb_x = epoch_index * len(train_dataloader) + i + 1
             tb_writer.add_scalar('Loss/train', last_loss, tb_x)
