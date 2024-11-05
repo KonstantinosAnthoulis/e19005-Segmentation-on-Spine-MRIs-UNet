@@ -103,7 +103,7 @@ model.to(torch.float32)
  #   print(param.device)
 
 #Training Hyperparameters 
-epochs = 25
+epochs = 1
 
 lr = 0.0001
 batchsize = 4
