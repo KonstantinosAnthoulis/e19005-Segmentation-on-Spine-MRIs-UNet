@@ -88,9 +88,12 @@ def train_one_epoch(epoch_index, tb_writer, model, optim, loss_func, train_datal
         ivd_running_accu += ivd_accu
         ivd_running_dice += ivd_dice
 
-        print("batch" ,i )
-        # every 50 batches
+        if (i + 1)  % 50 == 0:
+            print("batch" ,i )
+
+        # every 50 batches 
         if i % 50 == 49: 
+            
             last_loss = running_loss / 50
             last_accu = running_accu / 50
             last_dice = running_dice / 50

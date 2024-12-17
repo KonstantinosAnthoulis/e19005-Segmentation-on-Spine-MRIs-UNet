@@ -33,6 +33,9 @@ class Mri:
         if(mri_a.shape[0] > mri_a.shape[1] or mri_a.shape[0] > mri_a.shape[2]): #if z axis isn't first
           mri_a = np.transpose(mri_a, (2, 0, 1)) #set axes to correct order
 
+        #Clip values to the upper/lower limits of Hounsfield scale 
+        mri_a = np.clip(mri_a, -1000, 4000)
+
         #note: for some reason sitk.GetArrayFromImage() takes an image with dims [slice index, row, col] and transforms it to[row, col, slice index]
             #this bit of code solves that issue, not sure why it happens but this is enough to make sure all the images are of format [slice, row, col]
         

@@ -1,9 +1,23 @@
-﻿numpy
-matplotlib
-natsort
+﻿#For working with .mha images
 SimpleITK
+
+#Base
+numpy
+cupy-cuda11x
+natsort
 scikit-learn
+scikit-image
+tqdm
+opencv-python
+albumentations
 tensorboard 
+matplotlib 
+
+#Tensorflow
+Tensorflow
+keras
+
+#Torch
 #uncomment version you don't want installed, default GPU
 #gpu, adjust cuda as needed
 torch 
