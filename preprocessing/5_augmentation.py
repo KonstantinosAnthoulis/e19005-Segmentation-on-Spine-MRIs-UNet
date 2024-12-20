@@ -13,20 +13,21 @@ import os
 import sys
 from natsort import natsorted
 import matplotlib.pyplot as plt
+import shutil
 
 # Training Data Paths, only applying augmentation on training data 
 ##train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
 #train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
 
-train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_label_slices")
 
 # Test directory to write in 
 #train_img_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
 #train_label_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
 
-train_img_augmented_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_image_slices")
-train_label_augmented_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_label_slices")
+train_img_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_image_slices")
+train_label_augmented_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_label_slices")
 
 # Get lists of the files in the directories 
 image_train_dir_list = os.listdir(train_img_slice_dir) 
@@ -63,6 +64,8 @@ flip_transform = A.HorizontalFlip(p=1)  # p=1 ensures the image is always flippe
 # Loop through each image in the training set
 for idx in range(0, dirlen):
     
+    print("idx:", idx)
+
     image_path = train_img_slice_dir.joinpath(image_train_dir_list[idx])
     label_path = train_label_slice_dir.joinpath(label_train_dir_list[idx])
 
@@ -72,6 +75,7 @@ for idx in range(0, dirlen):
     image_np = sitk.GetArrayFromImage(image_sitk).astype(np.float32)
     label_np = sitk.GetArrayFromImage(label_sitk)
 
+    """"
     # Loop over original and flipped versions
     for flip_type in ['original', 'flipped']:
         
@@ -80,9 +84,9 @@ for idx in range(0, dirlen):
             flipped = flip_transform(image=image_np, mask = label_np)
             image_np = flipped['image']
             label_np = flipped['mask']
-
-        # Apply augmentations and generate the augmented images
-        for aug_idx in range(augmented_no):
+    """
+    # Apply augmentations and generate the augmented images
+    for aug_idx in range(augmented_no):
 
             # try normalising input image before feeding it to gauss 
             image_min = np.min(image_np)
@@ -137,25 +141,36 @@ for idx in range(0, dirlen):
             post = input_path_split[1]  # '.mha'
 
             # Modify the filename to indicate if it's flipped and which augmentation
+            """
             if flip_type == 'flipped':
                 pre = pre + "_f"
-
+            """
             pre_img = pre + "_" + str(aug_idx)
 
             print(pre_img)
 
-            augmented_image_filename = pre_img + "." + post 
+            augmented_filename = pre_img + "." + post 
             
-            image_augmented_path = train_img_augmented_slice_dir.joinpath(augmented_image_filename)
+            image_augmented_path = train_img_augmented_slice_dir.joinpath(augmented_filename)
             #label_augmented_path = train_label_augmented_slice_dir.joinpath(augmented_filename)
 
             sitk.WriteImage(image_augmented_sitk, image_augmented_path)
 
-            if(aug_idx == 0):
-                augmented_label_filename = pre + ".mha"
-                label_augmented_sitk = sitk.GetImageFromArray(label_np)
-                label_augmented_path = train_label_augmented_slice_dir.joinpath(augmented_label_filename)
-                sitk.WriteImage(label_augmented_sitk, label_augmented_path)
+            #if(aug_idx == 0):#
+            #augmented_label_filename = pre + ".mha"
+            label_augmented_sitk = sitk.GetImageFromArray(label_np)
+            label_augmented_path = train_label_augmented_slice_dir.joinpath(augmented_filename)
+            sitk.WriteImage(label_augmented_sitk, label_augmented_path)
+"""
+#Delete folders after processing to avoid cluttering disk space
+def delete_folder(folder_path):
+    if folder_path.exists() and folder_path.is_dir():
+        shutil.rmtree(folder_path)
+        print(f"Deleted folder: {folder_path}")
+    else:
+        print(f"Folder not found or already deleted: {folder_path}")
 
 
-   
+delete_folder(train_img_slice_dir)
+delete_folder(train_label_slice_dir)
+"""

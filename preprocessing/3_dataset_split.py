@@ -12,8 +12,8 @@ import shutil
 import random
 from sklearn.model_selection import train_test_split
 
-full_image_path = pathlib.Path(r"D:/Spider Data/images_series")
-full_label_path = pathlib.Path(r"D:/Spider Data/labels_series")
+full_image_dir = pathlib.Path(r"D:/Spider Data/dataset/images_series")
+full_label_dir = pathlib.Path(r"D:/Spider Data/dataset/labels_series")
 #Directories to copy to
 #train_image_path = pathlib.Path(r"D:/Spider Data/train_images")
 #train_label_path = pathlib.Path(r"D:/Spider Data/train_labels")
@@ -21,14 +21,14 @@ full_label_path = pathlib.Path(r"D:/Spider Data/labels_series")
 #test_label_path = pathlib.Path(r"D:/Spider Data/test_labels")
 
 #laptop
-train_image_path = pathlib.Path(r"D:/Spider Data/train_images")
-train_label_path = pathlib.Path(r"D:/Spider Data/train_labels")
-test_image_path = pathlib.Path(r"D:/Spider Data/test_images")
-test_label_path = pathlib.Path(r"D:/Spider Data/test_labels")
+train_image_path = pathlib.Path(r"D:/Spider Data/dataset/train_images")
+train_label_path = pathlib.Path(r"D:/Spider Data/dataset/train_labels")
+test_image_path = pathlib.Path(r"D:/Spider Data/dataset/test_images")
+test_label_path = pathlib.Path(r"D:/Spider Data/dataset/test_labels")
 
 
-full_image_dir_list = os.listdir(full_image_path)
-full_label_dir_list = os.listdir(full_label_path)
+full_image_dir_list = os.listdir(full_image_dir)
+full_label_dir_list = os.listdir(full_label_dir)
 
 print("full image dir len", len(full_image_dir_list))
 
@@ -38,7 +38,7 @@ def get_patient_id(filename):
 
 
 # Get list of image filenames
-image_files = os.listdir(full_image_path)
+image_files = os.listdir(full_image_dir)
 
 # Split filenames into train and validation sets based on patient IDs
 patient_ids = [get_patient_id(filename) for filename in image_files]
@@ -53,8 +53,8 @@ for filename in image_files:
     patient_id = get_patient_id(filename)
     print(patient_id)
     is_train = patient_id in train_patient_ids
-    source_image_path = os.path.join(full_image_path, filename)
-    source_mask_path = os.path.join(full_label_path, filename)  # Assuming mask filenames are same as image filenames
+    source_image_path = os.path.join(full_image_dir, filename)
+    source_mask_path = os.path.join(full_label_dir, filename)  # Assuming mask filenames are same as image filenames
 
     if is_train:
         destination_image_path = os.path.join(train_image_path, filename)
@@ -67,3 +67,15 @@ for filename in image_files:
     shutil.copy(source_mask_path, destination_mask_path)
     
 
+#Delete folders after processing to avoid cluttering disk space
+if full_image_dir.exists() and full_image_dir.is_dir():
+    shutil.rmtree(full_image_dir)
+    print(f"Deleted folder: {full_image_dir}")
+else:
+    print(f"Folder not found or already deleted: {full_image_dir}")
+
+if full_label_dir.exists() and full_label_dir.is_dir():
+    shutil.rmtree(full_label_dir)
+    print(f"Deleted folder: {full_label_dir}")
+else:
+    print(f"Folder not found or already deleted: {full_label_dir}")

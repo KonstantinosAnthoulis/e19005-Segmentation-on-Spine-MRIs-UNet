@@ -13,14 +13,15 @@ import SimpleITK as sitk
 import pathlib
 import os 
 from natsort import natsorted
+import shutil 
 
 #Full Dataset Paths 
 #images_dir = pathlib.Path(r"D:/Spider Data/images")
 #labels_dir = pathlib.Path(r"D:/Spider Data/labels")
 
 #Laptop path, only for running the data pipeline and writing the report while the model is training 
-images_dir = pathlib.Path(r"D:/Spider Data/images")
-labels_dir = pathlib.Path(r"D:/Spider Data/labels")
+images_dir = pathlib.Path(r"D:/Spider Data/dataset/images")
+labels_dir = pathlib.Path(r"D:/Spider Data/dataset/labels")
 
 
 #Paths to write the t1-t2 series to
@@ -28,8 +29,8 @@ labels_dir = pathlib.Path(r"D:/Spider Data/labels")
 #labels_series_dir = pathlib.Path(r"D:/Spider Data/labels_series")
 
 #Laptop path
-images_series_dir = pathlib.Path(r"D:/Spider Data/images_series")
-labels_series_dir = pathlib.Path(r"D:/Spider Data/labels_series")
+images_series_dir = pathlib.Path(r"D:/Spider Data/dataset/images_series")
+labels_series_dir = pathlib.Path(r"D:/Spider Data/dataset/labels_series")
 
 #Get lists of full dset
 images_dir_list = os.listdir(images_dir)
@@ -95,5 +96,16 @@ print("total t1 images excluded", t1_excl_count)
 print("total t2 images excluded", t2_excl_count)
     
 
-        
+#Delete the images and labels folders after processing to avoid cluttering disk space
+if images_dir.exists() and images_dir.is_dir():
+    shutil.rmtree(images_dir)
+    print(f"Deleted folder: {images_dir}")
+else:
+    print(f"Folder not found or already deleted: {images_dir}")
+
+if labels_dir.exists() and labels_dir.is_dir():
+    shutil.rmtree(labels_dir)
+    print(f"Deleted folder: {labels_dir}")
+else:
+    print(f"Folder not found or already deleted: {labels_dir}")
 

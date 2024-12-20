@@ -34,7 +34,7 @@ device = (
 
 start_time = time.time()
 
-json_path = "tensor_data/colab_data.json"
+json_path = "tensor_data/tensor_data.json"
 
 #Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -54,10 +54,11 @@ value_map = one_hot.value_map(masks_no = masks_no, masks_array= masks_array)
 
 #Paths 
 
-train_images = pathlib.Path(r"D:/Spider Data/train_image_augmented_slices")
-train_labels = pathlib.Path(r"D:/Spider Data/train_label_augmented_slices")
-test_images = pathlib.Path(r"D:/Spider Data/test_image_slices")
-test_labels = pathlib.Path(r"D:/Spider Data/test_label_slices")
+train_images = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_image_slices")
+#train_labels = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_label_slices")
+train_labels = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_label_slices")
+test_images = pathlib.Path(r"D:/Spider Data/dataset/test_image_slices")
+test_labels = pathlib.Path(r"D:/Spider Data/dataset/test_label_slices")
 
 """
 train_images = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_augmented_image_slices")
@@ -66,10 +67,10 @@ test_images = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_image_slices
 test_labels = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/test_label_slices")
 """
 
-train_image_numpy = pathlib.Path(r"D:/Spider Data/train_image_numpy")
-train_label_numpy = pathlib.Path(r"D:/Spider Data/train_label_numpy")
-test_image_numpy = pathlib.Path(r"D:/Spider Data/test_image_numpy")
-test_label_numpy =  pathlib.Path(r"D:/Spider Data/test_label_numpy")
+train_image_numpy = pathlib.Path(r"D:/Spider Data/dataset/train_image_numpy")
+train_label_numpy = pathlib.Path(r"D:/Spider Data/dataset/train_label_numpy")
+test_image_numpy = pathlib.Path(r"D:/Spider Data/dataset/test_image_numpy")
+test_label_numpy =  pathlib.Path(r"D:/Spider Data/dataset/test_label_numpy")
 
 """
 train_image_numpy = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_numpy")
@@ -106,8 +107,10 @@ for idx in range(0, len(train_images_sitk_list)):
     image_numpy_path = train_image_numpy.joinpath(f"{numpy_filename}.npy")
     np.save(image_numpy_path, image_a)
 
+
 # Loop for processing labels
-for idx in range(0, len(train_labels_sitk_list)):
+#for idx in range(0, len(train_labels_sitk_list)):
+
     label_path = train_labels.joinpath(train_labels_sitk_list[idx])
     numpy_filename = train_labels_sitk_list[idx].split('.')[0]
 
@@ -120,6 +123,8 @@ for idx in range(0, len(train_labels_sitk_list)):
     # Save the processed label tensor
     label_numpy_path = train_label_numpy.joinpath(f"{numpy_filename}.npy")
     np.save(label_numpy_path, label_a)
+    
+
 
 
 #test set
@@ -141,6 +146,7 @@ for idx in range(0, len(test_images_sitk_list)):
     image_numpy_path = test_image_numpy.joinpath(f"{numpy_filename}.npy")
     label_numpy_path = test_label_numpy.joinpath(f"{numpy_filename}.npy")
 
+    print(image_numpy_path)
     np.save(image_numpy_path, image_a)
     np.save(label_numpy_path, label_a)
 

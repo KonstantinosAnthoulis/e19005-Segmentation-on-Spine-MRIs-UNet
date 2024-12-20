@@ -24,8 +24,8 @@ from transforms import array_transforms
 #train_img_slice_dir = pathlib.Path(r"")
 #train_label_slice_dir = pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_augmented_sitk")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_augmented_sitk")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_augmented_label_slices")
 
 image_path = train_img_slice_dir
 label_path = train_label_slice_dir
@@ -110,9 +110,6 @@ for idx_label in range(0, dirlen_label):
     # Get label path
     label_file_path = label_path.joinpath(label_dir_list[idx_label])
 
-    print("LABEL PATH" , label_file_path)
-
-    
     # Read label
     label = mri_slice.Mri_Slice(label_file_path)
     
@@ -163,7 +160,7 @@ print("masks array", unique_masks_a)
 
 #These are the mask values from the Spider GC Dataset, I'm just leaving this here explicitly because some images don't contain mask 209 
   #Comment the code out for different dataset/depending on your application
-#unique_masks_a = np.array([0. ,   1. ,  2.   ,3.  , 4. ,  5. ,  6. ,  7. ,  8.,   9. ,100. ,201. ,202. ,203. ,204., 205. ,206. ,207. ,208. ,209.])
+unique_masks_a = np.array([0. ,   1. ,  2.   ,3.  , 4. ,  5. ,  6. ,  7. ,  8.,   9. ,100. ,201. ,202. ,203. ,204., 205. ,206. ,207. ,208. ,209.]) #setting manually to save time
 
 print("loop done")
 
@@ -173,8 +170,8 @@ data = {
     "col_max": col_dim_max,
     "image_tensor_min": image_tensor_min,
     "image_tensor_max": image_tensor_max,
-    "label_tensor_min": label_tensor_min,
-    "label_tensor_max": label_tensor_max,
+    "label_tensor_min": 0.0, #setting manually to save time
+    "label_tensor_max": 209.0, #setting manually to save time
     "masks_no": len(unique_masks_a),
     "masks_array": unique_masks_a
 }
@@ -201,7 +198,7 @@ data = {key: convert_to_native_types(value) for key, value in data.items()}
 
 # Set the path for the JSON file
 
-file_path = "tensor_data/augmented_data.json"
+file_path = "tensor_data/tensor_data.json"
 
 # Save the dictionary to a JSON file
 with open(file_path, "w") as json_file:

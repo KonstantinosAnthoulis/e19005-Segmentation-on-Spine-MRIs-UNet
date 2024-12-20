@@ -1,3 +1,5 @@
+#----------------DEPRECATED---------------------------
+
 #PREPROCESSING 2 
 
 #Now that we have our patient series, due to technical constraints, we are going to remove any images that

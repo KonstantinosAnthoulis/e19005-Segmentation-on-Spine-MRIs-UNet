@@ -9,6 +9,8 @@ import os
 import pathlib
 from natsort import natsorted
 import sys
+import shutil
+
 
 #Import array transforms for cropping
 from transforms import array_transforms
@@ -26,10 +28,10 @@ from image import mri
 #test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
 #test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 
-train_img_dir = pathlib.Path(r"D:/Spider Data/train_images")
-train_label_dir = pathlib.Path(r"D:/Spider Data/train_labels")
-test_img_dir = pathlib.Path(r"D:/Spider Data/test_images")
-test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
+train_img_dir = pathlib.Path(r"D:/Spider Data/dataset/train_images")
+train_label_dir = pathlib.Path(r"D:/Spider Data/dataset/train_labels")
+test_img_dir = pathlib.Path(r"D:/Spider Data/dataset/test_images")
+test_label_dir = pathlib.Path(r"D:/Spider Data/dataset/test_labels")
 
 
 #Directories to extract the 2D slices from the 3D images, replace paths as needed 
@@ -39,10 +41,10 @@ test_label_dir = pathlib.Path(r"D:/Spider Data/test_labels")
 #test_img_slice_dir = pathlib.Path(r"")
 #test_label_slice_dir= pathlib.Path(r"")
 
-train_img_slice_dir = pathlib.Path(r"D:/Spider Data/train_image_slices")
-train_label_slice_dir = pathlib.Path(r"D:/Spider Data/train_label_slices")
-test_img_slice_dir = pathlib.Path(r"D:/Spider Data/test_image_slices")
-test_label_slice_dir= pathlib.Path(r"D:/Spider Data/test_label_slices")
+train_img_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_image_slices")
+train_label_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/train_label_slices")
+test_img_slice_dir = pathlib.Path(r"D:/Spider Data/dataset/test_image_slices")
+test_label_slice_dir= pathlib.Path(r"D:/Spider Data/dataset/test_label_slices")
 
 #train_img_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_image_slices")
 #train_label_slice_dir = pathlib.Path(r"C:/Users/user/Desktop/Spider Data/train_label_slices")
@@ -127,3 +129,15 @@ for idx in range(0, test_dirlen):
     array_transforms.extract_slices(image_a, image_test_dir_list[idx], test_img_slice_dir) 
     array_transforms.extract_slices(label_a, label_test_dir_list[idx], test_label_slice_dir) 
     
+#Delete folders after processing to avoid cluttering disk space
+def delete_folder(folder_path):
+    if folder_path.exists() and folder_path.is_dir():
+        shutil.rmtree(folder_path)
+        print(f"Deleted folder: {folder_path}")
+    else:
+        print(f"Folder not found or already deleted: {folder_path}")
+
+delete_folder(train_img_dir)
+delete_folder(train_label_dir)
+delete_folder(test_img_dir)
+delete_folder(test_label_dir)
