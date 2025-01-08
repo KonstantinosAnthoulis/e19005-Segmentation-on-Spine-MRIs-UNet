@@ -21,7 +21,7 @@ device = (
     else "cpu"
 )
 
-json_path = "tensor_data/augmented_data.json"
+json_path = "tensor_data/tensor_data.json"
 
 # Load tensor parameters from .json
 with open(json_path, 'r') as file:
@@ -56,6 +56,7 @@ class SpiderDatasetNumpy(Dataset):
         return len(self.label_dir_list)
 
     def __getitem__(self, idx):
+        #Assuming directories are sorted
         img_path = os.path.join(self.img_dir, self.image_dir_list[idx])
         label_path = os.path.join(self.labels_dir, self.label_dir_list[idx])
 
