@@ -1,55 +1,13 @@
-# Πτυχιακή Εργασία e19005
-Πτυχιακή Εργασία Κωνσταντίνος Ανθούλης e19005 2023 2024 <br>
-Undergrad Thesis Konstantinos Anthoulis e19005 2023 2024 <br> 
-Datatset & Challenge: https://spider.grand-challenge.org/ <br>
+# SPIDER Grand Challenge - 2D Segmentation UNet on spinal MR images (Bachelor's Thesis)
+## Intro
+This repo details the entire process of training a 2D segmentation Unet in the context of the [competition set by Radboud UMC](https://spider.grand-challenge.org/). The competition objective is to train a segmentation model to accurately detect anatomical structures of the spine, such as the vertebrae, intervertrebral discs (IVD) and the spinal canal within spine MR images. Due to the dimensionality of the images (analyzed further in the following chapters), 3D convnets are considered SOTA due to their ability to capture spatial information from all 3 axes, such as the template 3D NN-Unet trained by the competition hosts. The downside of 3D convnets is the exponential increase of computational demands during training compared to 2D convnets. The subject of the thesis was to test whether a 2D Unet, given the correct hyperparameters and extensive augmentation, can get close to replicating those results with a much smaller tech footprint. A lighter model such as this would also mean inference would be faster and less computationally demanding, rendering such a solution more easily deployable in a clinical setting. This readme can also serve as a quick primer if the reader is planning to create their own iteration, as the dataset will be covered in detail.
+## MRI 
+Before we dive into the data, a quick glance over what an MR image is and how they are portrayed on their multiple axes can help set everything in perspective. +
+## Dataset
+The original dataset is comprised of 447 MR images + 
+## Preprocessing
+Initially + 
+## Model and Hyperparameters
 
-## Dependencies
-Before running the command below, after running terminal on your virtual environment of choice <br>
-```
-pip install -r requirements.txt
-```
-go in the file and remove the comment on the install you would like to perform depending on GPU/CPU setup <br>
-
-## Additional Environment Setup
-Due to the project structure 2 additional steps are needed <Br>
-1) create a .env file in the project repo (gitignore passes through .env files that's why it's no there in the first place) and in it add
-```
-PYTHONPATH = ./
-```
-to ensure library imports will work due to file structure <br>
-
-2) In VSCode go to Open User Settings (JSON) and paste the following:
-```
-{
-  "python.analysis.extraPaths": ["./transforms", "./training", "./models", "./preprocessing"]
-}
-
-```
-After executing those 2 steps all should be working: just change the paths in each script to point to your data directories as needed <Br>
-
-
-
-## Script Order 
-Execute the scripts in this order to recreate training environment on your machine
-1) `extract_patient_series`: get all patient series with both t1 and t2 series w/o space images <br>
-2) `dataset_split`: split dataset of 3D images 80/20 or ratio of choice <br>
-splitting the 3D images and not the 2D images ensures series from the same patient are present in either train or test, not both at the same time<Br>
-3) `extract_slices`: take 3D images apply resampling, then extract 2D images to train model on <br>
-4) `crop_slices`: crop images to ROI as feature extraction/dimensionality reduction<br>
-5) `augmentation`: augmentation steps here, will fill when created (and/or use augmentation methods of choice) <br>
-6) `tensor_dims`: comb through the dataset for tensor data (normalisation one-hot encoding etc) adn write data to .json file <br>
-7) `train_init`: initialise training with untrained Unet <br>
-8) `train_cont`: read model and optim states off path to continue training <Br>
-
-## Run Monitoring
-### Training Locally
-Before running `train_init.py` or `train_cont.py`, run in python terminal:
-```
-tensorboard --logdir runs
-```
-This will run Tensorboard on localhost:6006 and you can view run progress in your browser
-
-### Training on Microsoft Azure
-work in progress
-
-
+## Training Results
+Compared to + 

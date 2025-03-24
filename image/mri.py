@@ -5,8 +5,8 @@ reader.SetImageIO("MetaImageIO")
 import numpy as np
 
 #Import funtcions from transforms.py
-from transforms import mri_transforms, array_transforms
-
+#rom transforms import mri_transforms, array_transforms
+import mri_transforms, array_transforms
 #Here resampling and any other 3D pre-processing are applied before getting the 3D numpy array from the .mha file 
 #Parameters:
     #path: file path to .mha image

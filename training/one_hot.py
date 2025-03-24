@@ -1,6 +1,6 @@
 import numpy as np 
 import json 
-import cupy as cp 
+#import cupy as cp 
 
 def value_map(masks_no, masks_array): 
     val_range = np.arange(masks_no)
@@ -14,7 +14,7 @@ def value_map(masks_no, masks_array):
     value_map = np.vectorize(map_to_specified_set)
     
     return value_map
-
+"""
 def value_map_cp(masks_no, masks_array): 
     # Create a range of values on the GPU
     val_range = cp.arange(masks_no)
@@ -42,3 +42,4 @@ def value_map_cp(masks_no, masks_array):
     
     # Return the mapping function directly (no need for vectorization here)
     return map_to_specified_set
+"""
