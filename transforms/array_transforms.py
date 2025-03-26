@@ -63,8 +63,8 @@ def extract_slices(arr, input_mri_path, target_slice_dir):
         
         #Small debug print to ensure correct dimensions (should be triple digits in both X and Y)
         
-        if(idx == 0):
-            print("dims of exported slices:", idx_slice.GetSize(), "for" , input_mri_path)
+        #if(idx == 0):
+           # print("dims of exported slices:", idx_slice.GetSize(), "for" , input_mri_path)
        
         #Naming convention + path for new file
         input_path_split = input_mri_path.split(".")

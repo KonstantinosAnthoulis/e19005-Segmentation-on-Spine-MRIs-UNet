@@ -1,6 +1,6 @@
 import torch
 
-def pad_to_resolution(input_tensor, target_resolution):
+def pad_to_resolution(input_tensor, target_resolution, value):
     current_resolution = input_tensor.shape[-2:]
 
     if current_resolution == target_resolution:
@@ -16,6 +16,6 @@ def pad_to_resolution(input_tensor, target_resolution):
     right_pad = pad_width - left_pad
 
     # Apply padding
-    padded_tensor = torch.nn.functional.pad(input_tensor, (left_pad, right_pad, top_pad, bottom_pad), mode='constant', value=0)
+    padded_tensor = torch.nn.functional.pad(input_tensor, (left_pad, right_pad, top_pad, bottom_pad), mode='constant', value=value)
 
     return padded_tensor
